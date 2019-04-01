@@ -8,6 +8,19 @@ void rfm_initialize()
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
 
+#ifdef RFM_FEATURE_SYNCWORD
+    // Write the sync word and enable sync word use if enabled.
+    const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
+    for(uint8_t offset = 0; offset <= RFM_CONFIG_SYNCWORDLENGTH; offset++)
+        rfm_register_write(RFM_REG_SYNCVALUE1 + offset, sync_word[offset]);
+    rfm_register_write(RFM_REG_SYNCCONFIG,
+                       rfm_register_read(RFM_REG_SYNCCONFIG) | 128);
+#else
+    // Ensure sync word detection is disabled.
+    rfm_register_write(RFM_REG_SYNCCONFIG,
+                       rfm_register_read(RFM_REG_SYNCCONFIG) & ~128);
+#endif
+
 #ifdef RFM_FEATURE_ENCRYPTION
     // Write the AES key and enable encryption if enabled.
     const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
