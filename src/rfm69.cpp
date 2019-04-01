@@ -8,6 +8,35 @@ void rfm_initialize()
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
 
+#ifdef RFM_FEATURE_ENCRYPTION
+    // Write the AES key and enable encryption if enabled.
+    const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
+
+    rfm_register_write(RFM_REG_AESKEY01, aes_key[0]);
+    rfm_register_write(RFM_REG_AESKEY02, aes_key[1]);
+    rfm_register_write(RFM_REG_AESKEY03, aes_key[2]);
+    rfm_register_write(RFM_REG_AESKEY04, aes_key[3]);
+    rfm_register_write(RFM_REG_AESKEY05, aes_key[4]);
+    rfm_register_write(RFM_REG_AESKEY06, aes_key[5]);
+    rfm_register_write(RFM_REG_AESKEY07, aes_key[6]);
+    rfm_register_write(RFM_REG_AESKEY08, aes_key[7]);
+    rfm_register_write(RFM_REG_AESKEY09, aes_key[8]);
+    rfm_register_write(RFM_REG_AESKEY10, aes_key[9]);
+    rfm_register_write(RFM_REG_AESKEY11, aes_key[10]);
+    rfm_register_write(RFM_REG_AESKEY12, aes_key[11]);
+    rfm_register_write(RFM_REG_AESKEY13, aes_key[12]);
+    rfm_register_write(RFM_REG_AESKEY14, aes_key[13]);
+    rfm_register_write(RFM_REG_AESKEY15, aes_key[14]);
+    rfm_register_write(RFM_REG_AESKEY16, aes_key[15]);
+
+    rfm_register_write(RFM_REG_PACKETCONFIG2,
+                       rfm_register_read(RFM_REG_PACKETCONFIG2 | 1));
+#else
+    // Ensure encryption is disabled.
+    rfm_register_write(RFM_REG_PACKETCONFIG2,
+                       rfm_register_read(RFM_REG_PACKETCONFIG2 & 254));
+#endif
+
     return;
 }
 
