@@ -2,13 +2,11 @@
 
 #include "rfm69.h"
 
-void rfm_initialize(rfm_state_t& rfm)
+void rfm_initialize()
 {
     SPI.begin();
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
-
-    rfm.operating_mode = RFM_OPMODE_STANDBY;
 
     return;
 }

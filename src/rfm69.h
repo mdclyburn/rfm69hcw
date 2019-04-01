@@ -12,12 +12,7 @@
 #define RFM_OPMODE_TRANSMIT   3 // Transmitter mode
 #define RFM_OPMODE_RECEIVE    4 // Receiver mode
 
-struct rfm_state_t
-{
-    uint8_t operating_mode;
-};
-
-void rfm_initialize(rfm_state_t& rfm);
+void rfm_initialize();
 
 void rfm_select();
 
