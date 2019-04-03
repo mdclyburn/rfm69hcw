@@ -142,6 +142,11 @@ void __rfm_operating_mode(const uint8_t mode)
     __rfm_register_write(
         RFM_REG_OPMODE,
         (__rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
+
+    while(__rfm_register_read(!(RFM_REG_IRQFLAGS1 & (1 << 7))))
+        delayMicroseconds(100);
+
+    return;
 }
 
 // ===== Temperature ===========================================================
