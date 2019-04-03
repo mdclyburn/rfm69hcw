@@ -26,8 +26,6 @@ uint8_t rfm_operating_mode();
 
 void rfm_operating_mode(const uint8_t mode);
 
-uint16_t rfm_bitrate();
-
 // ===== Reset Pin =============================================================
 // =============================================================================
 #ifdef RFM_FEATURE_RESET

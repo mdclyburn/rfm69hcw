@@ -144,12 +144,6 @@ void rfm_operating_mode(const uint8_t mode)
         (rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
 }
 
-uint16_t rfm_bitrate()
-{
-    return (rfm_register_read(RFM_REG_BITRATEMSB) << 8)
-        | rfm_register_read(RFM_REG_BITRATELSB);
-}
-
 // ===== Temperature ===========================================================
 // =============================================================================
 #ifdef RFM_FEATURE_TEMPERATURE
