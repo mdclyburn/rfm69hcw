@@ -72,7 +72,7 @@ uint8_t rfm_register_read(const uint8_t rfm_register)
 
 #ifdef RFM_DEBUG
     Serial.print("RFM: read register ");
-    Serial.print(rfm_register);
+    Serial.println(rfm_register);
 #endif
 
     rfm_select();
@@ -114,7 +114,14 @@ uint8_t rfm_register_write(const uint8_t rfm_register,
 
 uint8_t rfm_operating_mode()
 {
-    return rfm_register_read(RFM_REG_OPMODE);
+    return (rfm_register_read(RFM_REG_OPMODE) & RFM_REG_MASK_OPMODE_MODE) >> 2;
+}
+
+void rfm_operating_mode(const uint8_t mode)
+{
+    rfm_register_write(
+        RFM_REG_OPMODE,
+        (rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
 }
 
 uint16_t rfm_bitrate()
@@ -135,6 +142,11 @@ uint8_t rfm_temperature(const int8_t offset)
      * bit 2: will be set to 1 while measurement is running
      * bit 1, 0: unused
      */
+
+    // The temperature sensor cannot be used in receive mode because it
+    // uses the ADC of the receive block.
+    if(rfm_operating_mode() == RFM_OPMODE_RECEIVE)
+        return 0;
 
     // According to the datasheet, reading the temperature takes < 100us.
     // Impose a wait here instead of pestering the radio immediately.
