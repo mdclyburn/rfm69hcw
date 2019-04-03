@@ -164,9 +164,10 @@ uint8_t rfm_temperature(const int8_t offset)
      * bit 1, 0: unused
      */
 
-    // The temperature sensor cannot be used in receive mode because it
-    // uses the ADC of the receive block.
-    if(__rfm_operating_mode() == RFM_OPMODE_RECEIVE)
+    // The temperature sensor can only be used in standby or frequency
+    // synthesizer modes but not in receive mode.
+    const uint8_t mode = __rfm_operating_mode();
+    if(mode == RFM_OPMODE_SLEEP || mode == RFM_OPMODE_RECEIVE)
         return 0;
 
     // According to the datasheet, reading the temperature takes < 100us.
