@@ -15,6 +15,8 @@ void rfm_initialize()
     pinMode(RFM_CONFIG_RESETPIN, OUTPUT);
 #endif
 
+    __rfm_operating_mode(RFM_OPMODE_SLEEP);
+
 #ifdef RFM_FEATURE_SYNCWORD
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
@@ -23,9 +25,9 @@ void rfm_initialize()
     __rfm_register_write(RFM_REG_SYNCCONFIG,
                          __rfm_register_read(RFM_REG_SYNCCONFIG | 1));
 
-    // Serial.println("Sync word:");
-    // for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
-    //     Serial.println(rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
+//     Serial.println("Sync word:");
+//     for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
+//         Serial.println(__rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
 #else
     // Ensure sync word detection is disabled.
     __rfm_register_write(RFM_REG_SYNCCONFIG,
