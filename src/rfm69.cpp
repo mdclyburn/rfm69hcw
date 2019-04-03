@@ -18,10 +18,14 @@ void rfm_initialize()
 #ifdef RFM_FEATURE_SYNCWORD
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
-    for(uint8_t offset = 0; offset <= RFM_CONFIG_SYNCWORDLENGTH; offset++)
-        rfm_register_write(RFM_REG_SYNCVALUE1 + offset, sync_word[offset]);
+
+    rfm_register_burst_write(RFM_REG_SYNCVALUE1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
     rfm_register_write(RFM_REG_SYNCCONFIG,
-                       rfm_register_read(RFM_REG_SYNCCONFIG) | 128);
+                       rfm_register_read(RFM_REG_SYNCCONFIG | 1));
+
+    // Serial.println("Sync word:");
+    // for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
+    //     Serial.println(rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
 #else
     // Ensure sync word detection is disabled.
     rfm_register_write(RFM_REG_SYNCCONFIG,
@@ -32,23 +36,7 @@ void rfm_initialize()
     // Write the AES key and enable encryption if enabled.
     const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
-    rfm_register_write(RFM_REG_AESKEY01, aes_key[0]);
-    rfm_register_write(RFM_REG_AESKEY02, aes_key[1]);
-    rfm_register_write(RFM_REG_AESKEY03, aes_key[2]);
-    rfm_register_write(RFM_REG_AESKEY04, aes_key[3]);
-    rfm_register_write(RFM_REG_AESKEY05, aes_key[4]);
-    rfm_register_write(RFM_REG_AESKEY06, aes_key[5]);
-    rfm_register_write(RFM_REG_AESKEY07, aes_key[6]);
-    rfm_register_write(RFM_REG_AESKEY08, aes_key[7]);
-    rfm_register_write(RFM_REG_AESKEY09, aes_key[8]);
-    rfm_register_write(RFM_REG_AESKEY10, aes_key[9]);
-    rfm_register_write(RFM_REG_AESKEY11, aes_key[10]);
-    rfm_register_write(RFM_REG_AESKEY12, aes_key[11]);
-    rfm_register_write(RFM_REG_AESKEY13, aes_key[12]);
-    rfm_register_write(RFM_REG_AESKEY14, aes_key[13]);
-    rfm_register_write(RFM_REG_AESKEY15, aes_key[14]);
-    rfm_register_write(RFM_REG_AESKEY16, aes_key[15]);
-
+    rfm_register_burst_write(RFM_REG_AESKEY01, aes_key, 16);
     rfm_register_write(RFM_REG_PACKETCONFIG2,
                        rfm_register_read(RFM_REG_PACKETCONFIG2 | 1));
 #else
@@ -129,6 +117,19 @@ uint8_t rfm_register_write(const uint8_t rfm_register,
 #endif
 
     return old_value;
+}
+
+void rfm_register_burst_write(const uint8_t begin_register,
+                              const uint8_t* const values,
+                              const uint8_t length)
+{
+    rfm_select();
+    SPI.transfer(begin_register | 128);
+    for(uint8_t offset = 0; offset < length; offset++)
+        SPI.transfer(values[offset]);
+    rfm_deselect();
+
+    return;
 }
 
 uint8_t rfm_operating_mode()

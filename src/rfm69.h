@@ -23,6 +23,10 @@ uint8_t rfm_register_read(const uint8_t rfm_register);
 uint8_t rfm_register_write(const uint8_t rfm_register,
                            const uint8_t value);
 
+void rfm_register_burst_write(const uint8_t begin_register,
+                              const uint8_t* const values,
+                              const uint8_t length);
+
 uint8_t rfm_operating_mode();
 
 void rfm_operating_mode(const uint8_t mode);

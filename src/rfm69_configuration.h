@@ -34,10 +34,10 @@
 
 /** Features
  *
- * RFM_FEATURE_ENCRYPTION (+160 bytes)
+ * RFM_FEATURE_ENCRYPTION (~ +160 bytes)
  *     Use 128-bit AES to encrypt message packets.
  *     The encryption key should be specified in RFM_CONFIG_ENCRYPTIONKEY.
- * RFM_FEATURE_SYNCWORD (+276 bytes)
+ * RFM_FEATURE_SYNCWORD (~ +276 bytes, 4-byte sync word)
  *     Filter incoming packets by ensuring they match the sync word.
  *     The sync word is given by RFM_CONFIG_SYNCWORD.
  *     RFM_CONFIG_SYNCWORDLENGTH must also be specified.
@@ -54,6 +54,8 @@
 #define RFM_FEATURE_SYNCWORD
 
 #define RFM_FEATURE_TEMPERATURE
+
+// #define RFM_DEBUG
 
 // ===== Sanity Checks =========================================================
 // =============================================================================
