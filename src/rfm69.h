@@ -5,12 +5,7 @@
 
 #include "rfm69_configuration.h"
 #include "rfm69_registers.h"
-
-#define RFM_OPMODE_SLEEP      0 // Sleep mode
-#define RFM_OPMODE_STANDBY    1 // Standby mode
-#define RFM_OPMODE_FS         2 // Frequency synthesizer mode
-#define RFM_OPMODE_TRANSMIT   3 // Transmitter mode
-#define RFM_OPMODE_RECEIVE    4 // Receiver mode
+#include "rfm69_control.h"
 
 void rfm_initialize();
 
