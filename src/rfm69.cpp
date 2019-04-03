@@ -8,6 +8,13 @@ void rfm_initialize()
     SPI.setDataMode(SPI_MODE0);
     SPI.setBitOrder(MSBFIRST);
 
+    // Set up digital pins.
+    pinMode(RFM_CONFIG_SSPIN, OUTPUT);
+
+#ifdef RFM_FEATURE_RESET
+    pinMode(RFM_CONFIG_RESETPIN, OUTPUT);
+#endif
+
 #ifdef RFM_FEATURE_SYNCWORD
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
@@ -52,6 +59,18 @@ void rfm_initialize()
 
     return;
 }
+
+#ifdef RFM_FEATURE_RESET
+void rfm_reset()
+{
+    digitalWrite(RFM_CONFIG_RESETPIN, HIGH);
+    delayMicroseconds(100);
+    digitalWrite(RFM_CONFIG_RESETPIN, LOW);
+    delay(5);
+
+    return;
+}
+#endif
 
 void rfm_select()
 {

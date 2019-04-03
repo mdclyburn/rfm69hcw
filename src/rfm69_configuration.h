@@ -10,6 +10,8 @@
  *     16-byte length encryption key used to encrypt payloads.
  * RFM_CONFIG_SSPIN
  *     Pin used to select the RFM69 (SPI SS).
+ * RFM_CONFIG_RESETPIN
+ *     Pin used to reset the RFM69.
  * RFM_CONFIG_SYNCWORD
  *     Sync word used to filter packets on.
  *     This value must be an array of length RFM_CONFIG_SYNCWORDLENGTH + 1.
@@ -22,9 +24,11 @@
 
 #define RFM_CONFIG_ENCRYPTIONKEY { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
-#define RFM_CONFIG_SSPIN P1_3
+#define RFM_CONFIG_SSPIN 10
 
-#define RFM_CONFIG_SYNCWORD { 0xAB, 0xCD, 0xEF, 0x00 }
+#define RFM_CONFIG_RESETPIN 9
+
+#define RFM_CONFIG_SYNCWORD { 0xAC, 0xDC, 0xFF, 0x06 }
 
 #define RFM_CONFIG_SYNCWORDLENGTH 3
 
@@ -37,11 +41,15 @@
  *     Filter incoming packets by ensuring they match the sync word.
  *     The sync word is given by RFM_CONFIG_SYNCWORD.
  *     RFM_CONFIG_SYNCWORDLENGTH must also be specified.
+ * RFM_FEATURE_RESET
+ *     Enable resetting the RFM69 with the RESET pin.
  * RFM_FEATURE_TEMPERATURE
  *     Supplies rfm_temperature() to read the CMOS temperature sensor.
  */
 
 #define RFM_FEATURE_ENCRYPTION
+
+#define RFM_FEATURE_RESET
 
 #define RFM_FEATURE_SYNCWORD
 
@@ -70,6 +78,16 @@
 
 #ifndef RFM_CONFIG_SYNCWORDLENGTH
 #error To use sync word: the length of the sync word length must be specified with RFM_CONFIG_SYNCWORDLENGTH (length should match array length minus one).
+#endif
+
+#endif
+
+/* RFM_FEATURE_RESET: RFM_CONFIG_RESETPIN must be supplied.
+ */
+#ifdef RFM_FEATURE_RESET
+
+#ifndef RFM_CONFIG_RESETPIN
+#error To use the reset pin: a pin number must be specified with RFM_CONFIG_RESETPIN.
 #endif
 
 #endif
