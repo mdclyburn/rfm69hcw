@@ -9,22 +9,22 @@
 
 void rfm_initialize();
 
-void rfm_select();
+void __rfm_select();
 
-void rfm_deselect();
+void __rfm_deselect();
 
-uint8_t rfm_register_read(const uint8_t rfm_register);
+uint8_t __rfm_register_read(const uint8_t rfm_register);
 
-uint8_t rfm_register_write(const uint8_t rfm_register,
+uint8_t __rfm_register_write(const uint8_t rfm_register,
                            const uint8_t value);
 
-void rfm_register_burst_write(const uint8_t begin_register,
+void __rfm_register_burst_write(const uint8_t begin_register,
                               const uint8_t* const values,
                               const uint8_t length);
 
-uint8_t rfm_operating_mode();
+uint8_t __rfm_operating_mode();
 
-void rfm_operating_mode(const uint8_t mode);
+void __rfm_operating_mode(const uint8_t mode);
 
 // ===== Reset Pin =============================================================
 // =============================================================================

@@ -19,30 +19,30 @@ void rfm_initialize()
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
 
-    rfm_register_burst_write(RFM_REG_SYNCVALUE1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
-    rfm_register_write(RFM_REG_SYNCCONFIG,
-                       rfm_register_read(RFM_REG_SYNCCONFIG | 1));
+    __rfm_register_burst_write(RFM_REG_SYNCVALUE1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
+    __rfm_register_write(RFM_REG_SYNCCONFIG,
+                         __rfm_register_read(RFM_REG_SYNCCONFIG | 1));
 
     // Serial.println("Sync word:");
     // for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
     //     Serial.println(rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
 #else
     // Ensure sync word detection is disabled.
-    rfm_register_write(RFM_REG_SYNCCONFIG,
-                       rfm_register_read(RFM_REG_SYNCCONFIG) & ~128);
+    __rfm_register_write(RFM_REG_SYNCCONFIG,
+                         __rfm_register_read(RFM_REG_SYNCCONFIG) & ~128);
 #endif
 
 #ifdef RFM_FEATURE_ENCRYPTION
     // Write the AES key and enable encryption if enabled.
     const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
-    rfm_register_burst_write(RFM_REG_AESKEY01, aes_key, 16);
-    rfm_register_write(RFM_REG_PACKETCONFIG2,
-                       rfm_register_read(RFM_REG_PACKETCONFIG2 | 1));
+    __rfm_register_burst_write(RFM_REG_AESKEY01, aes_key, 16);
+    __rfm_register_write(RFM_REG_PACKETCONFIG2,
+                         __rfm_register_read(RFM_REG_PACKETCONFIG2 | 1));
 #else
     // Ensure encryption is disabled.
-    rfm_register_write(RFM_REG_PACKETCONFIG2,
-                       rfm_register_read(RFM_REG_PACKETCONFIG2 & 254));
+    __rfm_register_write(RFM_REG_PACKETCONFIG2,
+                         __rfm_register_read(RFM_REG_PACKETCONFIG2 & 254));
 #endif
 
     return;
@@ -60,19 +60,19 @@ void rfm_reset()
 }
 #endif
 
-void rfm_select()
+void __rfm_select()
 {
     digitalWrite(RFM_CONFIG_SSPIN, LOW);
     return;
 }
 
-void rfm_deselect()
+void __rfm_deselect()
 {
     digitalWrite(RFM_CONFIG_SSPIN, HIGH);
     return;
 }
 
-uint8_t rfm_register_read(const uint8_t rfm_register)
+uint8_t __rfm_register_read(const uint8_t rfm_register)
 {
     const uint8_t register_access =
         rfm_register & 127;
@@ -82,10 +82,10 @@ uint8_t rfm_register_read(const uint8_t rfm_register)
     Serial.println(rfm_register);
 #endif
 
-    rfm_select();
+    __rfm_select();
     SPI.transfer(register_access);
     const uint8_t value = SPI.transfer(0);
-    rfm_deselect();
+    __rfm_deselect();
 
 #ifdef RFM_DEBUG
     Serial.print("RFM: register read returned: ");
@@ -95,8 +95,8 @@ uint8_t rfm_register_read(const uint8_t rfm_register)
     return value;
 }
 
-uint8_t rfm_register_write(const uint8_t rfm_register,
-                           const uint8_t value)
+uint8_t __rfm_register_write(const uint8_t rfm_register,
+                             const uint8_t value)
 {
     const uint8_t register_access =
         rfm_register | 128;
@@ -106,10 +106,10 @@ uint8_t rfm_register_write(const uint8_t rfm_register,
     Serial.println(rfm_register);
 #endif
 
-    rfm_select();
+    __rfm_select();
     SPI.transfer(register_access);
     const uint8_t old_value = SPI.transfer(value);
-    rfm_deselect();
+    __rfm_deselect();
 
 #ifdef RFM_DEBUG
     Serial.print("RFM: register write returned old value: ");
@@ -119,29 +119,29 @@ uint8_t rfm_register_write(const uint8_t rfm_register,
     return old_value;
 }
 
-void rfm_register_burst_write(const uint8_t begin_register,
-                              const uint8_t* const values,
-                              const uint8_t length)
+void __rfm_register_burst_write(const uint8_t begin_register,
+                                const uint8_t* const values,
+                                const uint8_t length)
 {
-    rfm_select();
+    __rfm_select();
     SPI.transfer(begin_register | 128);
     for(uint8_t offset = 0; offset < length; offset++)
         SPI.transfer(values[offset]);
-    rfm_deselect();
+    __rfm_deselect();
 
     return;
 }
 
-uint8_t rfm_operating_mode()
+uint8_t __rfm_operating_mode()
 {
-    return (rfm_register_read(RFM_REG_OPMODE) & RFM_REG_MASK_OPMODE_MODE) >> 2;
+    return (__rfm_register_read(RFM_REG_OPMODE) & RFM_REG_MASK_OPMODE_MODE) >> 2;
 }
 
-void rfm_operating_mode(const uint8_t mode)
+void __rfm_operating_mode(const uint8_t mode)
 {
-    rfm_register_write(
+    __rfm_register_write(
         RFM_REG_OPMODE,
-        (rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
+        (__rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
 }
 
 // ===== Temperature ===========================================================
@@ -159,21 +159,21 @@ uint8_t rfm_temperature(const int8_t offset)
 
     // The temperature sensor cannot be used in receive mode because it
     // uses the ADC of the receive block.
-    if(rfm_operating_mode() == RFM_OPMODE_RECEIVE)
+    if(__rfm_operating_mode() == RFM_OPMODE_RECEIVE)
         return 0;
 
     // According to the datasheet, reading the temperature takes < 100us.
     // Impose a wait here instead of pestering the radio immediately.
 
-    rfm_register_write(RFM_REG_TEMP1, (1 << 3));
+    __rfm_register_write(RFM_REG_TEMP1, (1 << 3));
 
 #ifndef RFM_CONFIG_COMPACT
     delayMicroseconds(100 - 10);
 #endif
 
-    while(rfm_register_read(RFM_REG_TEMP1) & (1 << 2));
+    while(__rfm_register_read(RFM_REG_TEMP1) & (1 << 2));
 
-    return ~rfm_register_read(RFM_REG_TEMP2) - 94 + offset;
+    return ~__rfm_register_read(RFM_REG_TEMP2) - 94 + offset;
 }
 
 #endif
