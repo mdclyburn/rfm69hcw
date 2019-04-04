@@ -9,7 +9,7 @@ void rfm_initialize()
     SPI.setBitOrder(MSBFIRST);
 
     // Set up digital pins.
-    pinMode(RFM_CONFIG_SSPIN, OUTPUT);
+    pinMode(RFM_CONFIG_PINSS, OUTPUT);
 
 #ifdef RFM_FEATURE_LISTEN
     __rfm_register_modify(RFM_REG_OPMODE,
@@ -22,7 +22,7 @@ void rfm_initialize()
 #endif
 
 #ifdef RFM_FEATURE_RESET
-    pinMode(RFM_CONFIG_RESETPIN, OUTPUT);
+    pinMode(RFM_CONFIG_PINRESET, OUTPUT);
 #endif
 
     __rfm_operating_mode(RFM_OPMODE_SLEEP);
@@ -67,9 +67,9 @@ void rfm_initialize()
 #ifdef RFM_FEATURE_RESET
 void rfm_reset()
 {
-    digitalWrite(RFM_CONFIG_RESETPIN, HIGH);
+    digitalWrite(RFM_CONFIG_PINRESET, HIGH);
     delayMicroseconds(100);
-    digitalWrite(RFM_CONFIG_RESETPIN, LOW);
+    digitalWrite(RFM_CONFIG_PINRESET, LOW);
     delay(5);
 
     return;
@@ -78,13 +78,13 @@ void rfm_reset()
 
 void __rfm_select()
 {
-    digitalWrite(RFM_CONFIG_SSPIN, LOW);
+    digitalWrite(RFM_CONFIG_PINSS, LOW);
     return;
 }
 
 void __rfm_deselect()
 {
-    digitalWrite(RFM_CONFIG_SSPIN, HIGH);
+    digitalWrite(RFM_CONFIG_PINSS, HIGH);
     return;
 }
 

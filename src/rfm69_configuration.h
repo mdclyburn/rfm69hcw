@@ -19,10 +19,10 @@
  *     Drop unneeded code where possible.
  * RFM_CONFIG_ENCRYPTIONKEY
  *     16-byte length encryption key used to encrypt payloads.
- * RFM_CONFIG_SSPIN
- *     Pin used to select the RFM69 (SPI SS).
- * RFM_CONFIG_RESETPIN
+ * RFM_CONFIG_PINRESET
  *     Pin used to reset the RFM69.
+ * RFM_CONFIG_PINSS
+ *     Pin used to select the RFM69 (SPI SS).
  * RFM_CONFIG_SYNCWORD
  *     Sync word used to filter packets on.
  *     This value must be an array of length RFM_CONFIG_SYNCWORDLENGTH + 1.
@@ -35,9 +35,9 @@
 
 #define RFM_CONFIG_ENCRYPTIONKEY { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
-#define RFM_CONFIG_SSPIN 10
+#define RFM_CONFIG_PINRESET 9
 
-#define RFM_CONFIG_RESETPIN 9
+#define RFM_CONFIG_PINSS 10
 
 #define RFM_CONFIG_SYNCWORD { 0xAC, 0xDC, 0xFF, 0x06 }
 
@@ -107,12 +107,12 @@
 
 #endif
 
-/* RFM_FEATURE_RESET: RFM_CONFIG_RESETPIN must be supplied.
+/* RFM_FEATURE_RESET: RFM_CONFIG_PINRESET must be supplied.
  */
 #ifdef RFM_FEATURE_RESET
 
-#ifndef RFM_CONFIG_RESETPIN
-#error To use the reset pin: a pin number must be specified with RFM_CONFIG_RESETPIN.
+#ifndef RFM_CONFIG_PINRESET
+#error To use the reset pin: a pin number must be specified with RFM_CONFIG_PINRESET.
 #endif
 
 #endif
