@@ -138,6 +138,21 @@ void __rfm_register_burst_write(const uint8_t begin_register,
     return;
 }
 
+void __rfm_register_modify(const uint8_t rfm_register,
+                             const uint8_t mask,
+                             const uint8_t value)
+{
+    uint8_t offset = 0;
+    while(!((mask >> offset) & 1))
+        offset++;
+
+    __rfm_register_write(
+        rfm_register,
+        (__rfm_register_read(rfm_register) & ~mask) | (value << offset));
+
+    return;
+}
+
 uint8_t __rfm_operating_mode()
 {
     return (__rfm_register_read(RFM_REG_OPMODE) & RFM_REG_MASK_OPMODE_MODE) >> 2;
@@ -145,11 +160,12 @@ uint8_t __rfm_operating_mode()
 
 void __rfm_operating_mode(const uint8_t mode)
 {
-    __rfm_register_write(
+    __rfm_register_modify(
         RFM_REG_OPMODE,
-        (__rfm_register_read(RFM_REG_OPMODE) & ~RFM_REG_MASK_OPMODE_MODE) | (mode << 2));
+        RFM_REG_MASK_OPMODE_MODE,
+        mode);
 
-    while(__rfm_register_read(!(RFM_REG_IRQFLAGS1 & (1 << 7))))
+    while(__rfm_register_read(!(RFM_REG_IRQFLAGS1 & RFM_REG_MASK_IRQFLAGS1_MODEREADY)))
         delayMicroseconds(100);
 
     return;

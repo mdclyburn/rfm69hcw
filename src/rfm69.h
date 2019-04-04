@@ -54,6 +54,18 @@ void __rfm_register_burst_write(const uint8_t begin_register,
                                 const uint8_t* const values,
                                 const uint8_t length);
 
+/** Set the specified option.
+ *
+ * Inserts value into rfm_register without losing the state of the unmasked bits.
+ *
+ * \param rfm_register Address of the register to modify.
+ * \param mask Bit mask of the bits to be set.
+ * \param value Value to set in the mask.
+ */
+void __rfm_register_modify(const uint8_t rfm_register,
+                           const uint8_t mask,
+                           const uint8_t value);
+
 /** Returns the radio's current operating mode.
  */
 uint8_t __rfm_operating_mode();
