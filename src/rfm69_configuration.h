@@ -48,6 +48,8 @@
  * RFM_FEATURE_ENCRYPTION (~ +160 bytes)
  *     Use 128-bit AES to encrypt message packets.
  *     The encryption key should be specified in RFM_CONFIG_ENCRYPTIONKEY.
+ * RFM_FEATURE_LISTEN
+ *     Listen for messages when in standby mode.
  * RFM_FEATURE_SYNCWORD (~ +276 bytes, 4-byte sync word)
  *     Filter incoming packets by ensuring they match the sync word.
  *     The sync word is given by RFM_CONFIG_SYNCWORD.
@@ -59,6 +61,8 @@
  */
 
 #define RFM_FEATURE_ENCRYPTION
+
+// #define RFM_FEATURE_LISTEN
 
 #define RFM_FEATURE_RESET
 

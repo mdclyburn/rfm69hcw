@@ -11,6 +11,16 @@ void rfm_initialize()
     // Set up digital pins.
     pinMode(RFM_CONFIG_SSPIN, OUTPUT);
 
+#ifdef RFM_FEATURE_LISTEN
+    __rfm_register_modify(RFM_REG_OPMODE,
+                          RFM_REG_MASK_OPMODE_LISTEN,
+                          1);
+#else
+    __rfm_register_modify(RFM_REG_OPMODE,
+                          RFM_REG_MASK_OPMODE_LISTEN,
+                          0);
+#endif
+
 #ifdef RFM_FEATURE_RESET
     pinMode(RFM_CONFIG_RESETPIN, OUTPUT);
 #endif
