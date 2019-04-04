@@ -19,6 +19,15 @@
  *     Drop unneeded code where possible.
  * RFM_CONFIG_ENCRYPTIONKEY
  *     16-byte length encryption key used to encrypt payloads.
+ * RFM_CONFIG_PACKETFIXED
+ *     Packet size is set ahead of time.
+ *     The size of packets should be specified in RFM_CONFIG_PACKETSIZE.
+ * RFM_CONFIG_PACKETSIZE
+ *     Bytes contained in each packet.
+ *     When using variable-length packets, this value becomes the max received payload size.
+ *     If not specified, it is set to the maximum size allowable.
+ * RFM_CONFIG_PACKETVARIABLE
+ *     Packet size can vary.
  * RFM_CONFIG_PINRESET
  *     Pin used to reset the RFM69.
  * RFM_CONFIG_PINSS
@@ -35,6 +44,12 @@
 
 #define RFM_CONFIG_ENCRYPTIONKEY { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
+// #define RFM_CONFIG_PACKETFIXED
+
+// #define RFM_CONFIG_PACKETSIZE 32
+
+#define RFM_CONFIG_PACKETVARIABLE
+
 #define RFM_CONFIG_PINRESET 9
 
 #define RFM_CONFIG_PINSS 10
@@ -45,6 +60,10 @@
 
 /** Features
  *
+ * RFM_FEATURE_ADDRESSING
+ *     Not implemented.
+ * RFM_FEATURE_CRC
+ *     Not implemented.
  * RFM_FEATURE_ENCRYPTION (~ +160 bytes)
  *     Use 128-bit AES to encrypt message packets.
  *     The encryption key should be specified in RFM_CONFIG_ENCRYPTIONKEY.
@@ -72,6 +91,34 @@
 
 // #define RFM_DEBUG
 
+// ===== Autoconfiguration =====================================================
+// =============================================================================
+
+/* RFM_CONFIG_PACKETVARIABLE: set max payload received size
+ */
+#ifdef RFM_CONFIG_PACKETVARIABLE
+
+#ifndef RFM_CONFIG_PACKETSIZE
+
+// Max receive size is 255, regardless of addressing.
+#ifndef RFM_FEATURE_ENCRYPTION
+#define RFM_CONFIG_PACKETSIZE 255
+#endif
+
+// Max receive size is 65 bytes without addressing: length byte + message (1 + 64)
+// Max receive size is 50 bytes with addressing: length byte + address byte + message (1 + 1 + 48)
+#ifdef RFM_FEATURE_ENCRYPTION
+#ifndef RFM_FEATURE_ADDRESSING
+#define RFM_CONFIG_PACKETSIZE 65
+#endif
+#else
+#define RFM_CONFIG_PACKETSIZE 50
+#endif
+
+#endif
+
+#endif
+
 // ===== Sanity Checks =========================================================
 // =============================================================================
 
@@ -91,6 +138,61 @@
 #error To use packet encryption: specify an encryption key up to 16 bytes in length with RFM_CONFIG_ENCRYPTIONKEY.
 #endif
 
+#endif
+
+/* RFM_CONFIG_PACKETFIXED:
+ * - RFM_CONFIG_PACKETVARIABLE is not also defined (more generally covers both being defined).
+ * - RFM_CONFIG_PACKETSIZE is defined.
+ */
+#ifdef RFM_CONFIG_PACKETFIXED
+
+#ifdef RFM_CONFIG_PACKETVARIABLE
+#error Both fixed- and variable-size packets cannot be used at the same time.
+#endif
+
+#endif
+
+/* RFM_CONFIG_PACKETVARIABLE: check the maximum received payload size.
+ */
+#ifdef RFM_CONFIG_PACKETVARIABLE
+
+// Max receive size is 255, regardless of addressing.
+#ifndef RFM_FEATURE_ENCRYPTION
+#if RFM_CONFIG_PACKETSIZE > 255
+#error Packet size cannot be greater than 255 bytes.
+#endif
+#endif
+
+// Max receive size is 65 bytes without addressing: length byte + message (1 + 64)
+// Max receive size is 50 bytes with addressing: length byte + address byte + message (1 + 1 + 48)
+#ifdef RFM_FEATURE_ENCRYPTION
+#ifdef RFM_FEATURE_ADDRESSING
+
+#if RFM_CONFIG_PACKETSIZE > 50
+#error Packet size cannot be greater than 50 bytes.
+#endif
+
+#else // not using addressing
+
+#if RFM_CONFIG_PACKETSIZE > 65
+#error Packet size cannot be greater than 65 bytes.
+#endif
+
+#endif // addressing
+#endif // encryption
+
+#endif
+
+/* RFM_CONFIG_PACKETFIXED, RFM_CONFIG_PACKETVARIABLE: a packet mode is set
+ */
+#ifndef RFM_CONFIG_PACKETFIXED
+#ifndef RFM_CONFIG_PACKETVARIABLE
+#error One of either fixed or variable-length packets must be specified with RFM_CONFIG_PACKETFIXED or RFM_CONFIG_PACKETVARIABLE.
+#endif
+#endif
+
+#ifndef RFM_CONFIG_PACKETSIZE
+#error To use fixed packet size: the packet size must be defined with RFM_CONFIG_PACKETSIZE.
 #endif
 
 /* RFM_FEATURE_SYNCWORD: RFM_CONFIG_SYNCWORD and RFM_CONFIG_SYNCWORDLENGTH must be supplied.
