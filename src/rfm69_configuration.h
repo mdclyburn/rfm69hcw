@@ -4,6 +4,17 @@
 
 /** Configuration
  *
+ * RFM_CONFIG_BITRATE
+ *     Rate of data transmission.
+ *     Defaults to 4.8kbps.
+ *       1.2kbps    0x682B
+ *       2.4kbps    0x3415
+ *       4.8kbps    0x1A0B
+ *       9.6kbps    0x0D05
+ *      19.2kbps    0x0683
+ *      38.4kbps    0x0341
+ *      76.8kbps    0x01A1
+ *     153.6kbps    0x00D0
  * RFM_CONFIG_COMPACT
  *     Drop unneeded code where possible.
  * RFM_CONFIG_ENCRYPTIONKEY
@@ -59,6 +70,14 @@
 
 // ===== Sanity Checks =========================================================
 // =============================================================================
+
+/* RFM_CONFIG_BITRATE: Defaults to 4.8kbps.
+ */
+#ifndef RFM_CONFIG_BITRATE
+
+#define RFM_CONFIG_BITRATE 0x1A0B
+
+#endif
 
 /* RFM_FEATURE_ENCRYPTION: An encryption key must be supplied when encryption is enabled.
  */

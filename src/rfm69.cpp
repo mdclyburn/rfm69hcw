@@ -17,6 +17,10 @@ void rfm_initialize()
 
     __rfm_operating_mode(RFM_OPMODE_SLEEP);
 
+    // Set data rate.
+    __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
+    __rfm_register_write(RFM_REG_BITRATELSB, RFM_CONFIG_BITRATE & 0x00FF);
+
 #ifdef RFM_FEATURE_SYNCWORD
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;

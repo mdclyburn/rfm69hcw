@@ -10,7 +10,7 @@
 /** Initialize the RFM69HCW to a known state.
  *
  * Writes configuration to the RFM69's registers.
- * The configured settings depend on what has been specified through #defines.
+ * The configured settings depend on what has been specified through defines.
  */
 void rfm_initialize();
 
@@ -40,7 +40,7 @@ uint8_t __rfm_register_read(const uint8_t rfm_register);
  * \param value Value to write to the register.
  */
 uint8_t __rfm_register_write(const uint8_t rfm_register,
-                           const uint8_t value);
+                             const uint8_t value);
 
 /** Write to registers sequentially.
  *
@@ -51,8 +51,8 @@ uint8_t __rfm_register_write(const uint8_t rfm_register,
  * \param length Number of values provided in values.
  */
 void __rfm_register_burst_write(const uint8_t begin_register,
-                              const uint8_t* const values,
-                              const uint8_t length);
+                                const uint8_t* const values,
+                                const uint8_t length);
 
 /** Returns the radio's current operating mode.
  */
