@@ -79,6 +79,45 @@ uint8_t __rfm_operating_mode();
  */
 void __rfm_operating_mode(const uint8_t mode);
 
+/** Returns true if the FIFO is empty.
+ */
+#define rfm_fifo_empty() !(__rfm_register_read(RFM_REG_IRQFLAGS2)   \
+                           & RFM_REG_MASK_IRQFLAGS2_FIFONOTEMPTY)
+
+/** Returns true if the FIFO is full.
+ */
+#define rfm_fifo_full() (__rfm_register_read(RFM_REG_IRQFLAGS2)    \
+                         & RFM_REG_MASK_IRQFLAGS2_FIFOFULL)
+
+/** Write the contents of the FIFO to a buffer.
+ *
+ * Copies the data from the RFM FIFO to the given buffer.
+ * Amount of space needed is up to the max length of a message.
+ *
+ * \param buffer Buffer to write the contents of the FIFO to. It must be large enough to hold the maximum message size.
+ */
+void rfm_fifo_read(uint8_t* const buffer);
+
+/** Write the contents of a buffer to the FIFO.
+ *
+ * Copies the data from the buffer to the FIFO.
+ * Returns
+ *  0 = success
+ *  1 = payload too large
+ *  2 = FIFO is currently full and no bytes were written
+ *
+ * \param buffer Buffer to write to the FIFO.
+ * \param size Length of the buffer.
+ */
+uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size);
+
+/** Clears the contents of the FIFO.
+ */
+#define rfm_fifo_clear()                                        \
+    __rfm_register_modify(RFM_REG_IRQFLAGS2,                    \
+                          RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,   \
+                          1)
+
 // ===== Reset Pin =============================================================
 // =============================================================================
 #ifdef RFM_FEATURE_RESET

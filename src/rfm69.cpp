@@ -85,6 +85,16 @@ void rfm_initialize()
                          __rfm_register_read(RFM_REG_PACKETCONFIG2 & 254));
 #endif
 
+    // Clear the FIFO.
+    __rfm_register_modify(RFM_REG_IRQFLAGS2,
+                          RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,
+                          1);
+
+    // Transmit as soon as a byte is available.
+    __rfm_register_modify(RFM_REG_FIFOTHRESH,
+                          RFM_REG_MASK_FIFOTHRESH_TXSTARTCONDITION,
+                          1);
+
     return;
 }
 
@@ -203,6 +213,34 @@ void __rfm_operating_mode(const uint8_t mode)
         delayMicroseconds(100);
 
     return;
+}
+
+void rfm_fifo_read(uint8_t* const buffer)
+{
+    uint8_t i = 0;
+    while(!rfm_fifo_empty())
+        buffer[i++] = __rfm_register_read(RFM_REG_FIFO);
+
+    return;
+}
+
+uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
+{
+    if (size > RFM_CONFIG_PACKETSIZE)
+        return 1;
+
+    if (rfm_fifo_full())
+        return 2;
+
+#if RFM_CONFIG_PACKETSIZE <= 66
+    __rfm_register_burst_write(RFM_REG_FIFO, buffer, size);
+#else
+    uint8_t i = 0;
+    while(i < size && !rfm_fifo_full())
+        __rfm_register_write(RFM_REG_FIFO, buffer[i++]);
+#endif
+
+    return 0;
 }
 
 // ===== Temperature ===========================================================
