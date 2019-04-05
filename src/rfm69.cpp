@@ -21,6 +21,14 @@ void rfm_initialize()
                           0);
 #endif
 
+    // Node addressing.
+#ifdef RFM_FEATURE_ADDRESSING
+    __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
+    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+                          RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
+                          2);
+#endif
+
     // Set packet mode options.
 #ifdef RFM_CONFIG_PACKETFIXED
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
