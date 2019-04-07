@@ -118,6 +118,18 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size);
                           RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,   \
                           1)
 
+/** Returns true when the complete packet has been sent.
+ */
+#define rfm_packet_sent()                       \
+    (__rfm_register_read(RFM_REG_IRQFLAGS2)     \
+     & RFM_REG_MASK_IRQFLAGS2_PACKETSENT)
+
+/** Returns true when a payload is ready to be read from the FIFO.
+ */
+#define rfm_packet_received()               \
+    (__rfm_register_read(RFM_REG_IRQFLAGS2) \
+     & RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY)
+
 // ===== Reset Pin =============================================================
 // =============================================================================
 #ifdef RFM_FEATURE_RESET
