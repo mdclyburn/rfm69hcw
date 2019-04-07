@@ -11,16 +11,6 @@ void rfm_initialize()
     // Set up digital pins.
     pinMode(RFM_CONFIG_PINSS, OUTPUT);
 
-#ifdef RFM_FEATURE_LISTEN
-    __rfm_register_modify(RFM_REG_OPMODE,
-                          RFM_REG_MASK_OPMODE_LISTEN,
-                          1);
-#else
-    __rfm_register_modify(RFM_REG_OPMODE,
-                          RFM_REG_MASK_OPMODE_LISTEN,
-                          0);
-#endif
-
     // Node addressing.
 #ifdef RFM_FEATURE_ADDRESSING
     __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
@@ -43,6 +33,23 @@ void rfm_initialize()
 #else
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_CRCON,
+                          0);
+#endif
+
+    // Listen mode
+
+#ifdef RFM_FEATURE_LISTEN
+    __rfm_register_modify(RFM_REG_OPMODE,
+                          RFM_REG_MASK_OPMODE_LISTEN,
+                          1);
+
+    pinMode(RFM_CONFIG_PINPAYLOADREADY, INPUT);
+    __rfm_register_modify(RFM_REG_DIOMAPPING1,
+                          RFM_REG_MASK_DIOMAPPING1_DIO0MAPPING,
+                          1);
+#else
+    __rfm_register_modify(RFM_REG_OPMODE,
+                          RFM_REG_MASK_OPMODE_LISTEN,
                           0);
 #endif
 

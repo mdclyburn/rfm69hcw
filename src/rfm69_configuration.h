@@ -58,6 +58,8 @@
 
 #define RFM_CONFIG_PINSS 10
 
+#define RFM_CONFIG_PINPAYLOADREADY 11
+
 #define RFM_CONFIG_SYNCWORD { 0xAC, 0xDC, 0xFF, 0x06 }
 
 #define RFM_CONFIG_SYNCWORDLENGTH 3
@@ -89,7 +91,7 @@
 
 #define RFM_FEATURE_ENCRYPTION
 
-// #define RFM_FEATURE_LISTEN
+#define RFM_FEATURE_LISTEN
 
 #define RFM_FEATURE_RESET
 
@@ -175,10 +177,16 @@
   #endif
 #endif // encryption
 
-/* RFM_CONFIGPACKETFIXED: packet size must be specified
+/* RFM_CONFIG_PACKETFIXED: packet size must be specified
  */
 #if defined(RFM_CONFIG_PACKETFIXED) && !defined(RFM_CONFIG_PACKETSIZE)
   #error To use fixed packet size: the packet size must be defined with RFM_CONFIG_PACKETSIZE.
+#endif
+
+/* RFM_FEATURE_LISTEN: RFM_CONFIG_PINPAYLOADREADY
+ */
+#if defined(RFM_FEATURE_LISTEN) && !defined(RFM_CONFIG_PINPAYLOADREADY)
+  #error To use listen mode: define an interrupt pin with RFM_CONFIG_PAYLOADREADY.
 #endif
 
 /* RFM_FEATURE_SYNCWORD: RFM_CONFIG_SYNCWORD and RFM_CONFIG_SYNCWORDLENGTH must be supplied.
