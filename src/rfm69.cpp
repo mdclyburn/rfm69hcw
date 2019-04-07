@@ -29,6 +29,23 @@ void rfm_initialize()
                           2);
 #endif
 
+    // CRC
+#ifdef RFM_FEATURE_CRC
+    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+                          RFM_REG_MASK_PACKETCONFIG1_CRCON,
+                          1);
+
+    // Clear the FIFO and restart new packet reception, PayloadReady is not issued.
+    // Perhaps create a config #define to keep corrupted packets?
+    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+                          RFM_REG_MASK_PACKETCONFIG1_CRCAUTOCLEAROFF,
+                          0);
+#else
+    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+                          RFM_REG_MASK_PACKETCONFIG1_CRCON,
+                          0);
+#endif
+
     // Set packet mode options.
 #ifdef RFM_CONFIG_PACKETFIXED
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,

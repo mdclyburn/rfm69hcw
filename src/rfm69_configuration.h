@@ -83,6 +83,8 @@
  *     Supplies rfm_temperature() to read the CMOS temperature sensor.
  */
 
+#define RFM_FEATURE_CRC
+
 #define RFM_FEATURE_ADDRESSING
 
 #define RFM_FEATURE_ENCRYPTION
