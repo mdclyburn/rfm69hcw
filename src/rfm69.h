@@ -130,6 +130,20 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size);
     (__rfm_register_read(RFM_REG_IRQFLAGS2) \
      & RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY)
 
+#ifdef RFM_FEATURE_LISTEN
+
+/** Enter listening mode.
+ */
+void __rfm_listen_mode();
+
+/** Abort listen mode.
+ *
+ * \param mode Operating mode to transition to.
+ */
+void __rfm_abort_listen_mode(const uint8_t mode);
+
+#endif
+
 // ===== Reset Pin =============================================================
 // =============================================================================
 #ifdef RFM_FEATURE_RESET

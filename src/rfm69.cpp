@@ -40,18 +40,10 @@ void rfm_initialize()
 
     // Listen mode
 #ifdef RFM_FEATURE_LISTEN
-    __rfm_register_modify(RFM_REG_OPMODE,
-                          RFM_REG_MASK_OPMODE_LISTEN,
-                          1);
-
     pinMode(RFM_CONFIG_PINPAYLOADREADY, INPUT);
     __rfm_register_modify(RFM_REG_DIOMAPPING1,
                           RFM_REG_MASK_DIOMAPPING1_DIO0MAPPING,
                           1);
-#else
-    __rfm_register_modify(RFM_REG_OPMODE,
-                          RFM_REG_MASK_OPMODE_LISTEN,
-                          0);
 #endif
 
     // Set packet mode options.
@@ -279,6 +271,38 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
 
     return 0;
 }
+
+#ifdef RFM_FEATURE_LISTEN
+
+void __rfm_listen_mode()
+{
+    __rfm_operating_mode(RFM_OPMODE_STANDBY);
+    __rfm_register_modify(RFM_REG_OPMODE,
+                          RFM_REG_MASK_OPMODE_LISTEN,
+                          1);
+
+    return;
+}
+
+void __rfm_abort_listen_mode(const uint8_t mode)
+{
+    // 01111100
+    const uint8_t mask = RFM_REG_MASK_OPMODE_LISTEN
+        | RFM_REG_MASK_OPMODE_LISTENABRT
+        | RFM_REG_MASK_OPMODE_MODE;
+
+    const uint8_t cancellation =
+        (__rfm_register_read(RFM_REG_OPMODE) & ~mask)
+        | (1 << 5) // ListenAbort
+        | (mode << 2); // Mode
+
+    __rfm_register_write(RFM_REG_OPMODE, cancellation);
+    __rfm_register_modify(RFM_REG_OPMODE, RFM_REG_MASK_OPMODE_LISTENABRT, 0);
+
+    return;
+}
+
+#endif
 
 // ===== Temperature ===========================================================
 // =============================================================================
