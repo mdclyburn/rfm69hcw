@@ -11,6 +11,8 @@ void rfm_initialize()
     // Set up digital pins.
     pinMode(RFM_CONFIG_PINSS, OUTPUT);
 
+    __rfm_operating_mode(RFM_OPMODE_SLEEP);
+
     // Node addressing.
 #ifdef RFM_FEATURE_ADDRESSING
     __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
@@ -37,7 +39,6 @@ void rfm_initialize()
 #endif
 
     // Listen mode
-
 #ifdef RFM_FEATURE_LISTEN
     __rfm_register_modify(RFM_REG_OPMODE,
                           RFM_REG_MASK_OPMODE_LISTEN,
@@ -72,8 +73,6 @@ void rfm_initialize()
 #ifdef RFM_FEATURE_RESET
     pinMode(RFM_CONFIG_PINRESET, OUTPUT);
 #endif
-
-    __rfm_operating_mode(RFM_OPMODE_SLEEP);
 
     // Set data rate.
     __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
@@ -197,6 +196,13 @@ void __rfm_register_burst_write(const uint8_t begin_register,
                                 const uint8_t* const values,
                                 const uint8_t length)
 {
+#ifdef RFM_DEBUG
+    Serial.print("Burst register write from ");
+    Serial.print(begin_register);
+    Serial.print(" length ");
+    Serial.println(length);
+#endif
+
     __rfm_select();
     SPI.transfer(begin_register | 128);
     for(uint8_t offset = 0; offset < length; offset++)
@@ -210,6 +216,13 @@ void __rfm_register_modify(const uint8_t rfm_register,
                              const uint8_t mask,
                              const uint8_t value)
 {
+#ifdef RFM_DEBUG
+    Serial.print("Modify register ");
+    Serial.print(rfm_register);
+    Serial.print(" with ");
+    Serial.println(value);
+#endif
+
     uint8_t offset = 0;
     while(!((mask >> offset) & 1))
         offset++;
@@ -233,7 +246,7 @@ void __rfm_operating_mode(const uint8_t mode)
         RFM_REG_MASK_OPMODE_MODE,
         mode);
 
-    while(__rfm_register_read(!(RFM_REG_IRQFLAGS1 & RFM_REG_MASK_IRQFLAGS1_MODEREADY)))
+    while(!(__rfm_register_read(RFM_REG_IRQFLAGS1) & RFM_REG_MASK_IRQFLAGS1_MODEREADY))
         delayMicroseconds(100);
 
     return;
