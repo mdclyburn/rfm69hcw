@@ -37,7 +37,7 @@
 #define RFM_REG_FEIMSB        0x21 // Calculated frequency error, MSB
 #define RFM_REG_FEILSB        0x22 // Calculated frequency error, LSB
 #define RFM_REG_RSSICONFIG    0x23 // RSSI-related settings
-#define RFM_REG_VALUE         0x24 // RSSI value in dBm
+#define RFM_REG_RSSIVALUE     0x24 // RSSI value in dBm
 #define RFM_REG_DIOMAPPING1   0x25 // Pin mapping for DIO0-DIO3
 #define RFM_REG_DIOMAPPING2   0x26 // Pin mapping for DIO4, DIO5 and ClkOut frequency
 #define RFM_REG_IRQFLAGS1     0x27 // Status register: PLL lock, timeout, RSSI detection
