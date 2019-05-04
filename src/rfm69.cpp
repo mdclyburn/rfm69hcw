@@ -18,6 +18,13 @@ void rfm_initialize()
     delay(100);
 #endif
 
+    // Recommended Settings
+    __rfm_register_write(RFM_REG_LNA, 0x88);
+    __rfm_register_write(RFM_REG_RXBW, 0x55);
+    __rfm_register_write(RFM_REG_AFCBW, 0x8B);
+    __rfm_register_write(RFM_REG_RSSITHRESH, 0xE4);
+    __rfm_register_write(RFM_REG_TESTDAGC, 0x30);
+
     // Node addressing.
 #ifdef RFM_FEATURE_ADDRESSING
     __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
