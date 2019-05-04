@@ -11,7 +11,12 @@ void rfm_initialize()
     // Set up digital pins.
     pinMode(RFM_CONFIG_PINSS, OUTPUT);
 
-    __rfm_operating_mode(RFM_OPMODE_SLEEP);
+    // Set up reset.
+#ifdef RFM_FEATURE_RESET
+    pinMode(RFM_CONFIG_PINRESET, OUTPUT);
+    rfm_reset();
+    delay(100);
+#endif
 
     // Node addressing.
 #ifdef RFM_FEATURE_ADDRESSING
@@ -19,6 +24,10 @@ void rfm_initialize()
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
                           2);
+#else
+    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+                          RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
+                          0);
 #endif
 
     // CRC
@@ -38,20 +47,12 @@ void rfm_initialize()
                           0);
 #endif
 
-    // Listen mode
-#ifdef RFM_FEATURE_LISTEN
-    pinMode(RFM_CONFIG_PINPAYLOADREADY, INPUT);
-    __rfm_register_modify(RFM_REG_DIOMAPPING1,
-                          RFM_REG_MASK_DIOMAPPING1_DIO0MAPPING,
-                          1);
-#endif
-
     // Set packet mode options.
 #ifdef RFM_CONFIG_PACKETFIXED
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           0);
-    _rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
+    __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
 #endif
 
 #ifdef RFM_CONFIG_PACKETVARIABLE
@@ -59,11 +60,6 @@ void rfm_initialize()
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
     __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
-#endif
-
-    // Set up reset.
-#ifdef RFM_FEATURE_RESET
-    pinMode(RFM_CONFIG_PINRESET, OUTPUT);
 #endif
 
     // Set data rate.
@@ -209,10 +205,10 @@ void __rfm_register_modify(const uint8_t rfm_register,
                              const uint8_t value)
 {
 #ifdef RFM_DEBUG
-    Serial.print("Modify register ");
-    Serial.print(rfm_register);
-    Serial.print(" with ");
-    Serial.println(value);
+    Serial.print("Modify register by inserting ");
+    Serial.print(value);
+    Serial.print(" into ");
+    Serial.println(rfm_register);
 #endif
 
     uint8_t offset = 0;
@@ -247,8 +243,12 @@ void __rfm_operating_mode(const uint8_t mode)
 void rfm_fifo_read(uint8_t* const buffer)
 {
     uint8_t i = 0;
-    while(!rfm_fifo_empty())
+    while(!rfm_fifo_empty() && i < RFM_CONFIG_PACKETSIZE)
+    {
+        Serial.print("Saving byte to "); Serial.println(i);
         buffer[i++] = __rfm_register_read(RFM_REG_FIFO);
+        Serial.print("Value: "); Serial.println(buffer[i-1], HEX);
+    }
 
     return;
 }
@@ -261,13 +261,13 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
     if (rfm_fifo_full())
         return 2;
 
-#if RFM_CONFIG_PACKETSIZE <= 66
-    __rfm_register_burst_write(RFM_REG_FIFO, buffer, size);
-#else
+// #if RFM_CONFIG_PACKETSIZE <= 66
+//     __rfm_register_burst_write(RFM_REG_FIFO, buffer, size);
+// #else
     uint8_t i = 0;
     while(i < size && !rfm_fifo_full())
         __rfm_register_write(RFM_REG_FIFO, buffer[i++]);
-#endif
+// #endif
 
     return 0;
 }
@@ -286,18 +286,11 @@ void __rfm_listen_mode()
 
 void __rfm_abort_listen_mode(const uint8_t mode)
 {
-    // 01111100
-    const uint8_t mask = RFM_REG_MASK_OPMODE_LISTEN
-        | RFM_REG_MASK_OPMODE_LISTENABRT
-        | RFM_REG_MASK_OPMODE_MODE;
+    const uint8_t value =
+        (__rfm_register_read(RFM_REG_OPMODE) & 128) | 32 | (mode << 2);
 
-    const uint8_t cancellation =
-        (__rfm_register_read(RFM_REG_OPMODE) & ~mask)
-        | (1 << 5) // ListenAbort
-        | (mode << 2); // Mode
-
-    __rfm_register_write(RFM_REG_OPMODE, cancellation);
-    __rfm_register_modify(RFM_REG_OPMODE, RFM_REG_MASK_OPMODE_LISTENABRT, 0);
+    __rfm_register_write(RFM_REG_OPMODE, value);
+    __rfm_register_write(RFM_REG_OPMODE, value & ~RFM_REG_MASK_OPMODE_LISTENABRT);
 
     return;
 }
