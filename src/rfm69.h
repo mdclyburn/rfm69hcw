@@ -79,6 +79,8 @@ uint8_t __rfm_operating_mode();
  */
 void __rfm_operating_mode(const uint8_t mode);
 
+#define __rfm_rssi_value() - __rfm_register_read(RFM_REG_RSSIVALUE) / 2
+
 /** Returns true if the FIFO is empty.
  */
 #define rfm_fifo_empty() !(__rfm_register_read(RFM_REG_IRQFLAGS2)   \
