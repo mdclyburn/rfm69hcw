@@ -66,7 +66,7 @@ void rfm_initialize()
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
-    __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
+    __rfm_register_write(RFM_REG_PAYLOADLENGTH, 255);
 #endif
 
     // Set data rate.
@@ -77,17 +77,22 @@ void rfm_initialize()
     // Write the sync word and enable sync word use if enabled.
     const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
 
+    __rfm_register_modify(RFM_REG_SYNCCONFIG,
+                          RFM_REG_MASK_SYNCCONFIG_SYNCON,
+                          1);
+    __rfm_register_modify(RFM_REG_SYNCCONFIG,
+                          RFM_REG_MASK_SYNCCONFIG_SYNCSIZE,
+                          RFM_CONFIG_SYNCWORDLENGTH);
     __rfm_register_burst_write(RFM_REG_SYNCVALUE1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
-    __rfm_register_write(RFM_REG_SYNCCONFIG,
-                         __rfm_register_read(RFM_REG_SYNCCONFIG | 1));
 
 //     Serial.println("Sync word:");
 //     for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
 //         Serial.println(__rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
 #else
     // Ensure sync word detection is disabled.
-    __rfm_register_write(RFM_REG_SYNCCONFIG,
-                         __rfm_register_read(RFM_REG_SYNCCONFIG) & ~128);
+    __rfm_register_modify(RFM_REG_SYNCCONFIG,
+                          RFM_REG_MASK_SYNCCONFIG_SYNCON,
+                          0);
 #endif
 
 #ifdef RFM_FEATURE_ENCRYPTION
@@ -95,12 +100,10 @@ void rfm_initialize()
     const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
     __rfm_register_burst_write(RFM_REG_AESKEY01, aes_key, 16);
-    __rfm_register_write(RFM_REG_PACKETCONFIG2,
-                         __rfm_register_read(RFM_REG_PACKETCONFIG2 | 1));
+    __rfm_register_modify(RFM_REG_PACKETCONFIG2, 1, 1);
 #else
     // Ensure encryption is disabled.
-    __rfm_register_write(RFM_REG_PACKETCONFIG2,
-                         __rfm_register_read(RFM_REG_PACKETCONFIG2 & 254));
+    __rfm_register_modify(RFM_REG_PACKETCONFIG2, 1, 0);
 #endif
 
     // Clear the FIFO.
