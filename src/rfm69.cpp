@@ -116,6 +116,10 @@ void rfm_initialize()
                           RFM_REG_MASK_FIFOTHRESH_TXSTARTCONDITION,
                           1);
 
+    // Preamble size
+    __rfm_register_write(RFM_REG_PREAMBLEMSB, 0);
+    __rfm_register_write(RFM_REG_PREAMBLELSB, 0x40);
+
     return;
 }
 
