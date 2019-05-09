@@ -55,14 +55,14 @@ void rfm_initialize()
 #endif
 
     // Set packet mode options.
-#ifdef RFM_CONFIG_PACKETFIXED
+#ifdef RFM_FEATURE_PACKETFIXED
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           0);
     __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
 #endif
 
-#ifdef RFM_CONFIG_PACKETVARIABLE
+#ifdef RFM_FEATURE_PACKETVARIABLE
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
