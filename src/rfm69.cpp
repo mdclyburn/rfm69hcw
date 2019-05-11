@@ -24,16 +24,10 @@ void rfm_initialize()
     __rfm_register_write(RFM_REG_TESTDAGC, 0x30);
 
     // Node addressing.
-#ifdef RFM_FEATURE_ADDRESSING
     __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
                           2);
-#else
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
-                          RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
-                          0);
-#endif
 
     // CRC
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
