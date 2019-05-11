@@ -52,20 +52,11 @@ void rfm_initialize()
                           0);
 #endif
 
-    // Set packet mode options.
-#ifdef RFM_CONFIG_PACKETFIXED
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
-                          RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
-                          0);
-    __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
-#endif
-
-#ifdef RFM_CONFIG_PACKETVARIABLE
+    // Variable-length packet mode
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
     __rfm_register_write(RFM_REG_PAYLOADLENGTH, 255);
-#endif
 
     // Set data rate.
     __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
