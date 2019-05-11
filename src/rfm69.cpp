@@ -62,27 +62,17 @@ void rfm_initialize()
     __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
     __rfm_register_write(RFM_REG_BITRATELSB, RFM_CONFIG_BITRATE & 0x00FF);
 
-#ifdef RFM_FEATURE_SYNCWORD
-    // Write the sync word and enable sync word use if enabled.
-    const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
-
+    // Sync word
+    const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
     __rfm_register_modify(RFM_REG_SYNCCONFIG,
                           RFM_REG_MASK_SYNCCONFIG_SYNCON,
-                          1);
+                          1); // Enable use of the sync word.
     __rfm_register_modify(RFM_REG_SYNCCONFIG,
                           RFM_REG_MASK_SYNCCONFIG_SYNCSIZE,
-                          RFM_CONFIG_SYNCWORDLENGTH);
-    __rfm_register_burst_write(RFM_REG_SYNCVALUE1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
-
-//     Serial.println("Sync word:");
-//     for(uint8_t i = 0; i <= RFM_CONFIG_SYNCWORDLENGTH; i++)
-//         Serial.println(__rfm_register_read(RFM_REG_SYNCVALUE1+i), HEX);
-#else
-    // Ensure sync word detection is disabled.
-    __rfm_register_modify(RFM_REG_SYNCCONFIG,
-                          RFM_REG_MASK_SYNCCONFIG_SYNCON,
-                          0);
-#endif
+                          6); // Size of the sync word is taken to be 7 = 6 + 1.
+    __rfm_register_burst_write(RFM_REG_SYNCVALUE1,
+                               sync_word,
+                               7); // Write the 56-bit sync word.
 
 #ifdef RFM_FEATURE_ENCRYPTION
     // Write the AES key and enable encryption if enabled.
