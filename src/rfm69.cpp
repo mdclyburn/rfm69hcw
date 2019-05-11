@@ -55,14 +55,14 @@ void rfm_initialize()
 #endif
 
     // Set packet mode options.
-#ifdef RFM_FEATURE_PACKETFIXED
+#ifdef RFM_CONFIG_PACKETFIXED
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           0);
     __rfm_register_write(RFM_REG_PAYLOADLENGTH, RFM_CONFIG_PACKETSIZE);
 #endif
 
-#ifdef RFM_FEATURE_PACKETVARIABLE
+#ifdef RFM_CONFIG_PACKETVARIABLE
     __rfm_register_modify(RFM_REG_PACKETCONFIG1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
@@ -259,7 +259,9 @@ void rfm_fifo_read(uint8_t* const buffer)
     uint8_t i = 0;
     while(!rfm_fifo_empty() && i < RFM_CONFIG_PACKETSIZE)
     {
+        Serial.print("Saving byte to "); Serial.println(i);
         buffer[i++] = __rfm_register_read(RFM_REG_FIFO);
+        Serial.print("Value: "); Serial.println(buffer[i-1], HEX);
     }
 
     return;

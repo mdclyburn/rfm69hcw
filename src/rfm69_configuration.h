@@ -21,10 +21,15 @@
  *     Drop unneeded code where possible.
  * RFM_CONFIG_ENCRYPTIONKEY
  *     16-byte length encryption key used to encrypt payloads.
+ * RFM_CONFIG_PACKETFIXED
+ *     Packet size is set ahead of time.
+ *     The size of packets should be specified in RFM_CONFIG_PACKETSIZE.
  * RFM_CONFIG_PACKETSIZE
  *     Bytes contained in each packet.
  *     When using variable-length packets, this value becomes the max received payload size.
  *     If not specified, it is set to the maximum size allowable.
+ * RFM_CONFIG_PACKETVARIABLE
+ *     Packet size can vary.
  * RFM_CONFIG_PINRESET
  *     Pin used to reset the RFM69.
  * RFM_CONFIG_PINSS
@@ -44,6 +49,12 @@
 #define RFM_CONFIG_ENCRYPTIONKEY { 0x4D, 0x22, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
 #define RFM_CONFIG_NODEADDRESS 0x10
+
+#define RFM_CONFIG_PACKETFIXED
+
+#define RFM_CONFIG_PACKETSIZE 20
+
+// #define RFM_CONFIG_PACKETVARIABLE
 
 #define RFM_CONFIG_PINRESET P1_4
 
@@ -66,11 +77,6 @@
  *     The encryption key should be specified in RFM_CONFIG_ENCRYPTIONKEY.
  * RFM_FEATURE_LISTEN
  *     Listen for messages when in standby mode.
- * RFM_FEATURE_PACKETFIXED
- *     Packet size is set ahead of time.
- *     The size of packets should be specified in RFM_CONFIG_PACKETSIZE.
- * RFM_FEATURE_PACKETVARIABLE
- *     Packet size can vary.
  * RFM_FEATURE_SYNCWORD (~ +276 bytes, 4-byte sync word)
  *     Filter incoming packets by ensuring they match the sync word.
  *     The sync word is given by RFM_CONFIG_SYNCWORD.
@@ -89,10 +95,6 @@
 
 // #define RFM_FEATURE_LISTEN
 
-// #define RFM_FEATURE_PACKETFIXED
-
-#define RFM_FEATURE_PACKETVARIABLE
-
 #define RFM_FEATURE_RESET
 
 #define RFM_FEATURE_SYNCWORD
@@ -110,9 +112,9 @@
   #define RFM_CONFIG_BITRATE 0x1A0B
 #endif
 
-/* RFM_FEATURE_PACKETVARIABLE: set max payload received size
+/* RFM_CONFIG_PACKETVARIABLE: set max payload received size
  */
-#if defined(RFM_FEATURE_PACKETVARIABLE) && !defined(RFM_CONFIG_PACKETSIZE)
+#if defined(RFM_CONFIG_PACKETVARIABLE) && !defined(RFM_CONFIG_PACKETSIZE)
 
 // Max receive size is 255, regardless of addressing.
   #ifndef RFM_FEATURE_ENCRYPTION
@@ -145,23 +147,23 @@
   #error To use packet encryption: specify an encryption key up to 16 bytes in length with RFM_CONFIG_ENCRYPTIONKEY.
 #endif
 
-/* RFM_FEATURE_PACKETFIXED:
- * - RFM_FEATURE_PACKETVARIABLE is not also defined (more generally covers both being defined).
+/* RFM_CONFIG_PACKETFIXED:
+ * - RFM_CONFIG_PACKETVARIABLE is not also defined (more generally covers both being defined).
  * - RFM_CONFIG_PACKETSIZE is defined.
  */
-#ifdef RFM_FEATURE_PACKETFIXED
-  #ifdef RFM_FEATURE_PACKETVARIABLE
+#ifdef RFM_CONFIG_PACKETFIXED
+  #ifdef RFM_CONFIG_PACKETVARIABLE
     #error Both fixed- and variable-size packets cannot be used at the same time.
   #endif
 
   #ifndef RFM_CONFIG_PACKETSIZE
-    #error One of either fixed or variable-length packets must be specified with RFM_FEATURE_PACKETFIXED or RFM_FEATURE_PACKETVARIABLE.
+    #error One of either fixed or variable-length packets must be specified with RFM_CONFIG_PACKETFIXED or RFM_CONFIG_PACKETVARIABLE.
   #endif
 #endif
 
-/* RFM_FEATURE_PACKETVARIABLE: check the maximum received payload size (max 255 bytes).
+/* RFM_CONFIG_PACKETVARIABLE: check the maximum received payload size (max 255 bytes).
  */
-#ifdef RFM_FEATURE_PACKETVARIABLE
+#ifdef RFM_CONFIG_PACKETVARIABLE
   #if !defined(RFM_FEATURE_ENCRYPTION) && RFM_CONFIG_PACKETSIZE > 255
     #error Packet size cannot be greater than 255 bytes.
   #endif
@@ -177,9 +179,9 @@
   #endif
 #endif // encryption
 
-/* RFM_FEATURE_PACKETFIXED: packet size must be specified
+/* RFM_CONFIG_PACKETFIXED: packet size must be specified
  */
-#if defined(RFM_FEATURE_PACKETFIXED) && !defined(RFM_CONFIG_PACKETSIZE)
+#if defined(RFM_CONFIG_PACKETFIXED) && !defined(RFM_CONFIG_PACKETSIZE)
   #error To use fixed packet size: the packet size must be defined with RFM_CONFIG_PACKETSIZE.
 #endif
 
