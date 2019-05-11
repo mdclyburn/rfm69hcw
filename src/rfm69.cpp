@@ -12,11 +12,9 @@ void rfm_initialize()
     pinMode(RFM_CONFIG_PINSS, OUTPUT);
 
     // Set up reset.
-#ifdef RFM_FEATURE_RESET
     pinMode(RFM_CONFIG_PINRESET, OUTPUT);
     rfm_reset();
     delay(100);
-#endif
 
     // Recommended Settings
     __rfm_register_write(RFM_REG_LNA, 0x88);
@@ -123,7 +121,6 @@ void rfm_initialize()
     return;
 }
 
-#ifdef RFM_FEATURE_RESET
 void rfm_reset()
 {
     digitalWrite(RFM_CONFIG_PINRESET, HIGH);
@@ -133,7 +130,6 @@ void rfm_reset()
 
     return;
 }
-#endif
 
 void __rfm_select()
 {

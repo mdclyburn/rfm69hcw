@@ -146,10 +146,6 @@ void __rfm_abort_listen_mode(const uint8_t mode);
 
 #endif
 
-// ===== Reset Pin =============================================================
-// =============================================================================
-#ifdef RFM_FEATURE_RESET
-
 /** Reset the radio.
  *
  * Performs a POR on the radio.
@@ -157,8 +153,6 @@ void __rfm_abort_listen_mode(const uint8_t mode);
  * This function requires RFM_FEATURE_RESET.
  */
 void rfm_reset();
-
-#endif
 
 // ===== Temperature ===========================================================
 // =============================================================================
