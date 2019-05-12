@@ -2,6 +2,95 @@
 
 #include "rfm69.h"
 
+namespace registers
+{
+    const uint8_t FIFO = 0x00;
+    const uint8_t OpMode = 0x01;
+    const uint8_t DataModul = 0x02;
+    const uint8_t BitRateMSB = 0x03;
+    const uint8_t BitRateLSB = 0x04;
+    const uint8_t FdevMSB = 0x05;
+    const uint8_t FdevLSB = 0x06;
+    const uint8_t FRFMSB = 0x07;
+    const uint8_t FRFMID = 0x08;
+    const uint8_t FRFLSB = 0x09;
+    const uint8_t Osc1 = 0x0A;
+    const uint8_t AFCCTRL = 0x0B;
+    const uint8_t Reserved0C = 0x0C;
+    const uint8_t Listen1 = 0x0D;
+    const uint8_t Listen2 = 0x0E;
+    const uint8_t Listen3 = 0x0F;
+    const uint8_t Version = 0x10;
+    const uint8_t PALevel = 0x11;
+    const uint8_t PARamp = 0x12;
+    const uint8_t OCP = 0x13;
+    const uint8_t Reserved14 = 0x14;
+    const uint8_t Reserved15 = 0x15;
+    const uint8_t Reserved16 = 0x16;
+    const uint8_t Reserved17 = 0x17;
+    const uint8_t LNA = 0x18;
+    const uint8_t RxBW = 0x19;
+    const uint8_t AFCBW = 0x1A;
+    const uint8_t OOKPeak = 0x1B;
+    const uint8_t OOKAvg = 0x1C;
+    const uint8_t OOKFix = 0x1D;
+    const uint8_t AFCFEI = 0x1E;
+    const uint8_t AFCMSB = 0x1F;
+    const uint8_t AFCLSB = 0x20;
+    const uint8_t FEIMSB = 0x21;
+    const uint8_t FEILSB = 0x22;
+    const uint8_t RSSIConfig = 0x23;
+    const uint8_t RSSIValue = 0x24;
+    const uint8_t DIOMapping1 = 0x25;
+    const uint8_t DIOMapping2 = 0x26;
+    const uint8_t IRQFlags1 = 0x27;
+    const uint8_t IRQFlags2 = 0x28;
+    const uint8_t RSSIThresh = 0x29;
+    const uint8_t RxTimeout1 = 0x2A;
+    const uint8_t RxTimeout2 = 0x2B;
+    const uint8_t PreambleMSB = 0x2C;
+    const uint8_t PreambleLSB = 0x2D;
+    const uint8_t SyncConfig = 0x2E;
+    const uint8_t SyncValue1 = 0x2F;
+    const uint8_t SyncValue2 = 0x30;
+    const uint8_t SyncValue3 = 0x31;
+    const uint8_t SyncValue4 = 0x32;
+    const uint8_t SyncValue5 = 0x33;
+    const uint8_t SyncValue6 = 0x34;
+    const uint8_t SyncValue7 = 0x35;
+    const uint8_t SyncValue8 = 0x36;
+    const uint8_t PacketConfig1 = 0x37;
+    const uint8_t PayloadLength = 0x38;
+    const uint8_t NodeAdrs = 0x39;
+    const uint8_t BroadCastAdrs = 0x3A;
+    const uint8_t AutoModes = 0x3B;
+    const uint8_t FIFOThresh = 0x3C;
+    const uint8_t PacketConfig2 = 0x3D;
+    const uint8_t AESKey01 = 0x3E;
+    const uint8_t AESKey02 = 0x3F;
+    const uint8_t AESKey03 = 0x40;
+    const uint8_t AESKey04 = 0x41;
+    const uint8_t AESKey05 = 0x42;
+    const uint8_t AESKey06 = 0x43;
+    const uint8_t AESKey07 = 0x44;
+    const uint8_t AESKey08 = 0x45;
+    const uint8_t AESKey09 = 0x46;
+    const uint8_t AESKey10 = 0x47;
+    const uint8_t AESKey11 = 0x48;
+    const uint8_t AESKey12 = 0x49;
+    const uint8_t AESKey13 = 0x4A;
+    const uint8_t AESKey14 = 0x4B;
+    const uint8_t AESKey15 = 0x4C;
+    const uint8_t AESKey16 = 0x4D;
+    const uint8_t Temp1 = 0x4E;
+    const uint8_t Temp2 = 0x4F;
+    const uint8_t TestLNA = 0x58;
+    const uint8_t TestPA1 = 0x5A;
+    const uint8_t TestPA2 = 0x5C;
+    const uint8_t TestDAGC = 0x6F;
+    const uint8_t TestAFC = 0x71;
+}
+
 void rfm_initialize()
 {
     SPI.begin();
@@ -47,8 +136,9 @@ void rfm_initialize()
     __rfm_register_write(RFM_REG_PAYLOADLENGTH, 255);
 
     // Set data rate.
+    // __rfm_register_write(registers::BitRateMSB, RFM_CONFIG_BITRATE >> 8);
     __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
-    __rfm_register_write(RFM_REG_BITRATELSB, RFM_CONFIG_BITRATE & 0x00FF);
+    __rfm_register_write(registers::BitRateLSB, RFM_CONFIG_BITRATE & 0x00FF);
 
     // Sync word
     const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
@@ -225,7 +315,7 @@ void rfm_fifo_read(uint8_t* const buffer)
     while(!rfm_fifo_empty() && i < RFM_CONFIG_PACKETSIZE)
     {
         Serial.print("Saving byte to "); Serial.println(i);
-        buffer[i++] = __rfm_register_read(RFM_REG_FIFO);
+        buffer[i++] = __rfm_register_read(registers::FIFO);
         Serial.print("Value: "); Serial.println(buffer[i-1], HEX);
     }
 

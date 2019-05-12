@@ -7,6 +7,95 @@
 #include "rfm69_registers.h"
 #include "rfm69_control.h"
 
+namespace registers
+{
+    extern const uint8_t FIFO;
+    extern const uint8_t OpMode;
+    extern const uint8_t DataModul;
+    extern const uint8_t BitRateMSB;
+    extern const uint8_t BitRateLSB;
+    extern const uint8_t FdevMSB;
+    extern const uint8_t FdevLSB;
+    extern const uint8_t FRFMSB;
+    extern const uint8_t FRFMID;
+    extern const uint8_t FRFLSB;
+    extern const uint8_t Osc1;
+    extern const uint8_t AFCCTRL;
+    extern const uint8_t Reserved0C;
+    extern const uint8_t Listen1;
+    extern const uint8_t Listen2;
+    extern const uint8_t Listen3;
+    extern const uint8_t Version;
+    extern const uint8_t PALevel;
+    extern const uint8_t PARamp;
+    extern const uint8_t OCP;
+    extern const uint8_t Reserved14;
+    extern const uint8_t Reserved15;
+    extern const uint8_t Reserved16;
+    extern const uint8_t Reserved17;
+    extern const uint8_t LNA;
+    extern const uint8_t RxBW;
+    extern const uint8_t AFCBW;
+    extern const uint8_t OOKPeak;
+    extern const uint8_t OOKAvg;
+    extern const uint8_t OOKFix;
+    extern const uint8_t AFCFEI;
+    extern const uint8_t AFCMSB;
+    extern const uint8_t AFCLSB;
+    extern const uint8_t FEIMSB;
+    extern const uint8_t FEILSB;
+    extern const uint8_t RSSIConfig;
+    extern const uint8_t RSSIValue;
+    extern const uint8_t DIOMapping1;
+    extern const uint8_t DIOMapping2;
+    extern const uint8_t IRQFlags1;
+    extern const uint8_t IRQFlags2;
+    extern const uint8_t RSSIThresh;
+    extern const uint8_t RxTimeout1;
+    extern const uint8_t RxTimeout2;
+    extern const uint8_t PreambleMSB;
+    extern const uint8_t PreambleLSB;
+    extern const uint8_t SyncConfig;
+    extern const uint8_t SyncValue1;
+    extern const uint8_t SyncValue2;
+    extern const uint8_t SyncValue3;
+    extern const uint8_t SyncValue4;
+    extern const uint8_t SyncValue5;
+    extern const uint8_t SyncValue6;
+    extern const uint8_t SyncValue7;
+    extern const uint8_t SyncValue8;
+    extern const uint8_t PacketConfig1;
+    extern const uint8_t PayloadLength;
+    extern const uint8_t NodeAdrs;
+    extern const uint8_t BroadCastAdrs;
+    extern const uint8_t AutoModes;
+    extern const uint8_t FIFOThresh;
+    extern const uint8_t PacketConfig2;
+    extern const uint8_t AESKey01;
+    extern const uint8_t AESKey02;
+    extern const uint8_t AESKey03;
+    extern const uint8_t AESKey04;
+    extern const uint8_t AESKey05;
+    extern const uint8_t AESKey06;
+    extern const uint8_t AESKey07;
+    extern const uint8_t AESKey08;
+    extern const uint8_t AESKey09;
+    extern const uint8_t AESKey10;
+    extern const uint8_t AESKey11;
+    extern const uint8_t AESKey12;
+    extern const uint8_t AESKey13;
+    extern const uint8_t AESKey14;
+    extern const uint8_t AESKey15;
+    extern const uint8_t AESKey16;
+    extern const uint8_t Temp1;
+    extern const uint8_t Temp2;
+    extern const uint8_t TestLNA;
+    extern const uint8_t TestPA1;
+    extern const uint8_t TestPA2;
+    extern const uint8_t TestDAGC;
+    extern const uint8_t TestAFC;
+}
+
 /** Initialize the RFM69HCW to a known state.
  *
  * Writes configuration to the RFM69's registers.
