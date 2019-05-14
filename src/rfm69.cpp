@@ -3,6 +3,8 @@
 #include "rfm69.h"
 #include "rfm69_registers.h"
 
+using namespace mardev::rfm69;
+
 void rfm_initialize()
 {
     SPI.begin();
@@ -18,48 +20,48 @@ void rfm_initialize()
     delay(100);
 
     // Recommended Settings
-    __rfm_register_write(RFM_REG_LNA, 0x88);
-    __rfm_register_write(RFM_REG_RXBW, 0x55);
-    __rfm_register_write(RFM_REG_AFCBW, 0x8B);
-    __rfm_register_write(RFM_REG_RSSITHRESH, 0xE4);
-    __rfm_register_write(RFM_REG_TESTDAGC, 0x30);
+    __rfm_register_write(registers::LNA, 0x88);
+    __rfm_register_write(registers::RxBW, 0x55);
+    __rfm_register_write(registers::AFCBW, 0x8B);
+    __rfm_register_write(registers::RSSIThresh, 0xE4);
+    __rfm_register_write(registers::TestDAGC, 0x30);
 
     // Node addressing.
-    __rfm_register_write(RFM_REG_NODEADRS, RFM_CONFIG_NODEADDRESS);
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+    __rfm_register_write(registers::NodeAdrs, RFM_CONFIG_NODEADDRESS);
+    __rfm_register_modify(registers::PacketConfig1,
                           RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
                           2);
 
     // CRC
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+    __rfm_register_modify(registers::PacketConfig1,
                           RFM_REG_MASK_PACKETCONFIG1_CRCON,
                           1); // Enable CRCs.
 
     // Clear the FIFO and restart new packet reception when CRC check fails.
     // PayloadReady is not issued.
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+    __rfm_register_modify(registers::PacketConfig1,
                           RFM_REG_MASK_PACKETCONFIG1_CRCAUTOCLEAROFF,
                           0);
 
     // Variable-length packet mode
-    __rfm_register_modify(RFM_REG_PACKETCONFIG1,
+    __rfm_register_modify(registers::PacketConfig1,
                           RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
                           1);
-    __rfm_register_write(RFM_REG_PAYLOADLENGTH, 255);
+    __rfm_register_write(registers::PayloadLength, 255);
 
     // Set data rate.
-    __rfm_register_write(RFM_REG_BITRATEMSB, RFM_CONFIG_BITRATE >> 8);
-    __rfm_register_write(RFM_REG_BITRATELSB, RFM_CONFIG_BITRATE & 0x00FF);
+    __rfm_register_write(registers::BitRateMSB, RFM_CONFIG_BITRATE >> 8);
+    __rfm_register_write(registers::BitRateLSB, RFM_CONFIG_BITRATE & 0x00FF);
 
     // Sync word
     const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
-    __rfm_register_modify(RFM_REG_SYNCCONFIG,
+    __rfm_register_modify(registers::SyncConfig,
                           RFM_REG_MASK_SYNCCONFIG_SYNCON,
                           1); // Enable use of the sync word.
-    __rfm_register_modify(RFM_REG_SYNCCONFIG,
+    __rfm_register_modify(registers::SyncConfig,
                           RFM_REG_MASK_SYNCCONFIG_SYNCSIZE,
                           6); // Size of the sync word is taken to be 7 = 6 + 1.
-    __rfm_register_burst_write(RFM_REG_SYNCVALUE1,
+    __rfm_register_burst_write(registers::SyncValue1,
                                sync_word,
                                7); // Write the 56-bit sync word.
 
@@ -67,26 +69,26 @@ void rfm_initialize()
     // Write the AES key and enable encryption if enabled.
     const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
-    __rfm_register_burst_write(RFM_REG_AESKEY01, aes_key, 16);
-    __rfm_register_modify(RFM_REG_PACKETCONFIG2, 1, 1);
+    __rfm_register_burst_write(registers::AESKey01, aes_key, 16);
+    __rfm_register_modify(registers::PacketConfig2, 1, 1);
 #else
     // Ensure encryption is disabled.
-    __rfm_register_modify(RFM_REG_PACKETCONFIG2, 1, 0);
+    __rfm_register_modify(registers::PacketConfig2, 1, 0);
 #endif
 
     // Clear the FIFO.
-    __rfm_register_modify(RFM_REG_IRQFLAGS2,
+    __rfm_register_modify(registers::IRQFlags2,
                           RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,
                           1);
 
     // Transmit as soon as a byte is available.
-    __rfm_register_modify(RFM_REG_FIFOTHRESH,
+    __rfm_register_modify(registers::FIFOThresh,
                           RFM_REG_MASK_FIFOTHRESH_TXSTARTCONDITION,
                           1);
 
     // Preamble size
-    __rfm_register_write(RFM_REG_PREAMBLEMSB, 0);
-    __rfm_register_write(RFM_REG_PREAMBLELSB, 0x40);
+    __rfm_register_write(registers::PreambleMSB, 0);
+    __rfm_register_write(registers::PreambleLSB, 0x40);
 
     return;
 }
@@ -204,17 +206,17 @@ void __rfm_register_modify(const uint8_t rfm_register,
 
 uint8_t __rfm_operating_mode()
 {
-    return (__rfm_register_read(RFM_REG_OPMODE) & RFM_REG_MASK_OPMODE_MODE) >> 2;
+    return (__rfm_register_read(registers::OpMode) & RFM_REG_MASK_OPMODE_MODE) >> 2;
 }
 
 void __rfm_operating_mode(const uint8_t mode)
 {
     __rfm_register_modify(
-        RFM_REG_OPMODE,
+        registers::OpMode,
         RFM_REG_MASK_OPMODE_MODE,
         mode);
 
-    while(!(__rfm_register_read(RFM_REG_IRQFLAGS1) & RFM_REG_MASK_IRQFLAGS1_MODEREADY))
+    while(!(__rfm_register_read(registers::IRQFlags1) & RFM_REG_MASK_IRQFLAGS1_MODEREADY))
         delayMicroseconds(100);
 
     return;
@@ -223,10 +225,10 @@ void __rfm_operating_mode(const uint8_t mode)
 void rfm_fifo_read(uint8_t* const buffer)
 {
     uint8_t i = 0;
-    while(!rfm_fifo_empty() && i < RFM_CONFIG_PACKETSIZE)
+    while((__rfm_register_read(registers::IRQFlags2) & 64) && i < RFM_CONFIG_PACKETSIZE)
     {
         Serial.print("Saving byte to "); Serial.println(i);
-        buffer[i++] = __rfm_register_read(RFM_REG_FIFO);
+        buffer[i++] = __rfm_register_read(registers::FIFO);
         Serial.print("Value: "); Serial.println(buffer[i-1], HEX);
     }
 
@@ -238,15 +240,16 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
     if (size > RFM_CONFIG_PACKETSIZE)
         return 1;
 
-    if (rfm_fifo_full())
+    // FIFO full
+    if (__rfm_register_read(registers::IRQFlags2) & 128)
         return 2;
 
 // #if RFM_CONFIG_PACKETSIZE <= 66
-//     __rfm_register_burst_write(RFM_REG_FIFO, buffer, size);
+//     __rfm_register_burst_write(registers::FIFO, buffer, size);
 // #else
     uint8_t i = 0;
-    while(i < size && !rfm_fifo_full())
-        __rfm_register_write(RFM_REG_FIFO, buffer[i++]);
+    while(i < size && !(__rfm_register_read(registers::IRQFlags2) & 128))
+        __rfm_register_write(registers::FIFO, buffer[i++]);
 // #endif
 
     return 0;
@@ -257,7 +260,7 @@ uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
 void __rfm_listen_mode()
 {
     __rfm_operating_mode(RFM_OPMODE_STANDBY);
-    __rfm_register_modify(RFM_REG_OPMODE,
+    __rfm_register_modify(registers::OpMode,
                           RFM_REG_MASK_OPMODE_LISTEN,
                           1);
 
@@ -267,10 +270,10 @@ void __rfm_listen_mode()
 void __rfm_abort_listen_mode(const uint8_t mode)
 {
     const uint8_t value =
-        (__rfm_register_read(RFM_REG_OPMODE) & 128) | 32 | (mode << 2);
+        (__rfm_register_read(registers::OpMode) & 128) | 32 | (mode << 2);
 
-    __rfm_register_write(RFM_REG_OPMODE, value);
-    __rfm_register_write(RFM_REG_OPMODE, value & ~RFM_REG_MASK_OPMODE_LISTENABRT);
+    __rfm_register_write(registers::OpMode, value);
+    __rfm_register_write(registers::OpMode, value & ~RFM_REG_MASK_OPMODE_LISTENABRT);
 
     return;
 }
@@ -299,15 +302,15 @@ uint8_t rfm_temperature(const int8_t offset)
     // According to the datasheet, reading the temperature takes < 100us.
     // Impose a wait here instead of pestering the radio immediately.
 
-    __rfm_register_write(RFM_REG_TEMP1, (1 << 3));
+    __rfm_register_write(registers::Temp1, (1 << 3));
 
 #ifndef RFM_CONFIG_COMPACT
     delayMicroseconds(100 - 10);
 #endif
 
-    while(__rfm_register_read(RFM_REG_TEMP1) & (1 << 2));
+    while(__rfm_register_read(registers::Temp1) & (1 << 2));
 
-    return ~__rfm_register_read(RFM_REG_TEMP2) - 94 + offset;
+    return ~__rfm_register_read(registers::Temp2) - 94 + offset;
 }
 
 #endif
