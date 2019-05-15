@@ -9,7 +9,7 @@ namespace mardev
 {
     namespace rfm69
     {
-        void rfm_initialize()
+        void initialize()
         {
             SPI.begin();
             SPI.setDataMode(SPI_MODE0);
@@ -20,7 +20,7 @@ namespace mardev
 
             // Set up reset.
             pinMode(RFM_CONFIG_PINRESET, OUTPUT);
-            rfm_reset();
+            reset();
             delay(100);
 
             // Recommended Settings
@@ -97,7 +97,7 @@ namespace mardev
             return;
         }
 
-        void rfm_reset()
+        void reset()
         {
             digitalWrite(RFM_CONFIG_PINRESET, HIGH);
             delayMicroseconds(100);
@@ -107,13 +107,13 @@ namespace mardev
             return;
         }
 
-        void __rfm_select()
+        void select()
         {
             digitalWrite(RFM_CONFIG_PINSS, LOW);
             return;
         }
 
-        void __rfm_deselect()
+        void deselect()
         {
             digitalWrite(RFM_CONFIG_PINSS, HIGH);
             return;
@@ -129,10 +129,10 @@ namespace mardev
             Serial.println(rfm_register);
             #endif
 
-            __rfm_select();
+            select();
             SPI.transfer(register_access);
             const uint8_t value = SPI.transfer(0);
-            __rfm_deselect();
+            deselect();
 
             #ifdef RFM_DEBUG
             Serial.print("RFM: register read returned: ");
@@ -153,10 +153,10 @@ namespace mardev
             Serial.println(rfm_register);
             #endif
 
-            __rfm_select();
+            select();
             SPI.transfer(register_access);
             const uint8_t old_value = SPI.transfer(value);
-            __rfm_deselect();
+            deselect();
 
             #ifdef RFM_DEBUG
             Serial.print("RFM: register write returned old value: ");
@@ -177,11 +177,11 @@ namespace mardev
             Serial.println(length);
             #endif
 
-            __rfm_select();
+            select();
             SPI.transfer(begin_register | 128);
             for(uint8_t offset = 0; offset < length; offset++)
                 SPI.transfer(values[offset]);
-            __rfm_deselect();
+            deselect();
 
             return;
         }
@@ -208,12 +208,12 @@ namespace mardev
             return;
         }
 
-        uint8_t __rfm_operating_mode()
+        uint8_t mode()
         {
             return (__rfm_register_read(registers::OpMode) & registers::mask::Mode) >> 2;
         }
 
-        void __rfm_operating_mode(const uint8_t mode)
+        void mode(const uint8_t mode)
         {
             __rfm_register_modify(
                 registers::OpMode,
@@ -299,8 +299,8 @@ namespace mardev
 
             // The temperature sensor can only be used in standby or frequency
             // synthesizer modes but not in receive mode.
-            const uint8_t mode = __rfm_operating_mode();
-            if(mode == RFM_OPMODE_SLEEP || mode == RFM_OPMODE_RECEIVE)
+            const uint8_t current_mode = mode();
+            if(current_mode == RFM_OPMODE_SLEEP || current_mode == RFM_OPMODE_RECEIVE)
                 return 0;
 
             // According to the datasheet, reading the temperature takes < 100us.

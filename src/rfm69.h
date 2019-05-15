@@ -16,15 +16,15 @@ namespace mardev
          * Writes configuration to the RFM69's registers.
          * The configured settings depend on what has been specified through defines.
          */
-        void rfm_initialize();
+        void initialize();
 
         /** Begin a transaction with the radio module.
          */
-        void __rfm_select();
+        void select();
 
         /** End a transaction with the radio module.
          */
-        void __rfm_deselect();
+        void deselect();
 
         /** Read from a register.
          *
@@ -72,7 +72,7 @@ namespace mardev
 
         /** Returns the radio's current operating mode.
          */
-        uint8_t __rfm_operating_mode();
+        uint8_t mode();
 
         /** Set the radio's operating mode.
          *
@@ -81,7 +81,7 @@ namespace mardev
          *
          * \param mode Operating mode to switch to.
          */
-        void __rfm_operating_mode(const uint8_t mode);
+        void mode(const uint8_t mode);
 
         /** Returns true if the FIFO is empty.
          */
@@ -172,7 +172,7 @@ namespace mardev
          * When the function returns, the radio is immediately ready when this function returns.
          * This function requires RFM_FEATURE_RESET.
          */
-        void rfm_reset();
+        void reset();
 
         // ===== Temperature ===========================================================
         // =============================================================================
