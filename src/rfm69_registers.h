@@ -96,59 +96,68 @@ namespace mardev
             const uint8_t TestPA2       = 0x5C; // High-power PA settings, part 2
             const uint8_t TestDAGC      = 0x6F; // Fading margin improvement
             const uint8_t TestAFC       = 0x71; // AFC offset for low modulation index AFC
+
+            namespace mask
+            {
+                // OpMode
+                const uint8_t Mode       = 28; // 00011100
+                const uint8_t ListenAbrt = 32;
+                const uint8_t Listen     = 64;
+                const uint8_t SeqOff     = 128;
+
+                // Listen1
+                const uint8_t ListenEnd       = 6;        // 00000110
+                const uint8_t ListenCriteria  = 8;
+                const uint8_t ListenResolRx   = 32 + 16;  // 00110000
+                const uint8_t ListenResolIdle = 128 + 64;
+
+                // IRQFlags1
+                const uint8_t SyncAddressMatch = 1;
+                const uint8_t AutoMode         = 2;
+                const uint8_t Timeout          = 4;
+                const uint8_t RSSI             = 8;
+                const uint8_t PLLLock          = 16;
+                const uint8_t TxReady          = 32;
+                const uint8_t RxReady          = 64;
+                const uint8_t ModeReady        = 128;
+
+                // IRQFlags2
+                const uint8_t CRCOK            = 2;
+                const uint8_t PayloadReady     = 4;
+                const uint8_t PacketSent       = 8;
+                const uint8_t FIFOOverrun      = 16;
+                const uint8_t FIFOLevel        = 32;
+                const uint8_t FIFONotEmpty     = 64;
+                const uint8_t FIFOFull         = 128;
+
+                // SyncConfig
+                const uint8_t SyncTol           = 7;  // 00000111
+                const uint8_t SyncSize          = 56; // 00111000
+                const uint8_t FIFOFillCondition = 64;
+                const uint8_t SyncOn            = 128;
+
+                // PacketConfig1
+                const uint8_t AddressFiltering = 6;  // 00000110
+                const uint8_t CRCAutoClearOff  = 8;
+                const uint8_t CRCOn            = 16;
+                const uint8_t DCFree           = 96; // 01100000
+                const uint8_t PacketFormat     = 128;
+
+                // FIFOThresh
+                const uint8_t FIFOThreshold    = 127; // 01111111
+                const uint8_t TxStartCondition = 128;
+
+                // PacketConfig2
+                const uint8_t AESOn              = 1;
+                const uint8_t AutoRxRestartOn    = 2;
+                const uint8_t InterPacketRxDelay = 240; // 11110000
+
+                // Temp1
+                const uint8_t TempMeasRunning = 4;
+                const uint8_t TempMeasStart   = 8;
+            }
         }
     }
 }
-
-// RegOpMode
-#define RFM_REG_MASK_OPMODE_MODE       28   // 00011100
-#define RFM_REG_MASK_OPMODE_LISTENABRT 32
-#define RFM_REG_MASK_OPMODE_LISTEN     64
-#define RFM_REG_MASK_OPMODE_SEQOFF     128
-
-// RegListen1
-#define RFM_REG_MASK_LISTEN1_LISTENEND 6    // 00000110
-
-// RegDioMapping1
-#define RFM_REG_MASK_DIOMAPPING1_DIO0MAPPING 192 // 11000000
-
-// RegIrqFlags1
-#define RFM_REG_MASK_IRQFLAGS1_SAMATCH   1
-#define RFM_REG_MASK_IRQFLAGS1_AUTO      2
-#define RFM_REG_MASK_IRQFLAGS1_TIMEOUT   4
-#define RFM_REG_MASK_IRQFLAGS1_RSSI      8
-#define RFM_REG_MASK_IRQFLAGS1_PLLLOCK   16
-#define RFM_REG_MASK_IRQFLAGS1_TXREADY   32
-#define RFM_REG_MASK_IRQFLAGS1_RXREADY   64
-#define RFM_REG_MASK_IRQFLAGS1_MODEREADY 128
-
-// RegIrqFlags2
-#define RFM_REG_MASK_IRQFLAGS2_CRCOK        2
-#define RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY 4
-#define RFM_REG_MASK_IRQFLAGS2_PACKETSENT   8
-#define RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN  16
-#define RFM_REG_MASK_IRQFLAGS2_FIFOLEVEL    32
-#define RFM_REG_MASK_IRQFLAGS2_FIFONOTEMPTY 64
-#define RFM_REG_MASK_IRQFLAGS2_FIFOFULL     128
-
-// RegSyncConfig
-#define RFM_REG_MASK_SYNCCONFIG_SYNCTOL           7    // 00000111
-#define RFM_REG_MASK_SYNCCONFIG_SYNCSIZE          56   // 00111000
-#define RFM_REG_MASK_SYNCCONFIG_FIFOFILLCONDITION 64
-#define RFM_REG_MASK_SYNCCONFIG_SYNCON            128
-
-// RegPacketConfig
-#define RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING 6    // 00000110
-#define RFM_REG_MASK_PACKETCONFIG1_CRCAUTOCLEAROFF  8
-#define RFM_REG_MASK_PACKETCONFIG1_CRCON            16
-#define RFM_REG_MASK_PACKETCONFIG1_DCFREE           96   // 01100000
-#define RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT     128
-
-// RegFifoThresh
-#define RFM_REG_MASK_FIFOTHRESH_FIFOTHRESHOLD      127 // 01111111
-#define RFM_REG_MASK_FIFOTHRESH_TXSTARTCONDITION   128
-
-// RegPacketConfig2
-#define RFM_REG_MASK_PACKETCONFIG2_AESON 1
 
 #endif

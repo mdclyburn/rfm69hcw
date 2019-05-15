@@ -33,23 +33,23 @@ namespace mardev
             // Node addressing.
             __rfm_register_write(registers::NodeAdrs, RFM_CONFIG_NODEADDRESS);
             __rfm_register_modify(registers::PacketConfig1,
-                                  RFM_REG_MASK_PACKETCONFIG1_ADDRESSFILTERING,
+                                  registers::mask::AddressFiltering,
                                   2);
 
             // CRC
             __rfm_register_modify(registers::PacketConfig1,
-                                  RFM_REG_MASK_PACKETCONFIG1_CRCON,
+                                  registers::mask::CRCOn,
                                   1); // Enable CRCs.
 
             // Clear the FIFO and restart new packet reception when CRC check fails.
             // PayloadReady is not issued.
             __rfm_register_modify(registers::PacketConfig1,
-                                  RFM_REG_MASK_PACKETCONFIG1_CRCAUTOCLEAROFF,
+                                  registers::mask::CRCAutoClearOff,
                                   0);
 
             // Variable-length packet mode
             __rfm_register_modify(registers::PacketConfig1,
-                                  RFM_REG_MASK_PACKETCONFIG1_PACKETFORMAT,
+                                  registers::mask::PacketFormat,
                                   1);
             __rfm_register_write(registers::PayloadLength, 255);
 
@@ -60,10 +60,10 @@ namespace mardev
             // Sync word
             const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
             __rfm_register_modify(registers::SyncConfig,
-                                  RFM_REG_MASK_SYNCCONFIG_SYNCON,
+                                  registers::mask::SyncOn,
                                   1); // Enable use of the sync word.
             __rfm_register_modify(registers::SyncConfig,
-                                  RFM_REG_MASK_SYNCCONFIG_SYNCSIZE,
+                                  registers::mask::SyncSize,
                                   6); // Size of the sync word is taken to be 7 = 6 + 1.
             __rfm_register_burst_write(registers::SyncValue1,
                                        sync_word,
@@ -82,12 +82,12 @@ namespace mardev
 
             // Clear the FIFO.
             __rfm_register_modify(registers::IRQFlags2,
-                                  RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,
+                                  registers::mask::FIFOOverrun,
                                   1);
 
             // Transmit as soon as a byte is available.
             __rfm_register_modify(registers::FIFOThresh,
-                                  RFM_REG_MASK_FIFOTHRESH_TXSTARTCONDITION,
+                                  registers::mask::TxStartCondition,
                                   1);
 
             // Preamble size
@@ -210,17 +210,17 @@ namespace mardev
 
         uint8_t __rfm_operating_mode()
         {
-            return (__rfm_register_read(registers::OpMode) & RFM_REG_MASK_OPMODE_MODE) >> 2;
+            return (__rfm_register_read(registers::OpMode) & registers::mask::Mode) >> 2;
         }
 
         void __rfm_operating_mode(const uint8_t mode)
         {
             __rfm_register_modify(
                 registers::OpMode,
-                RFM_REG_MASK_OPMODE_MODE,
+                registers::mask::Mode,
                 mode);
 
-            while(!(__rfm_register_read(registers::IRQFlags1) & RFM_REG_MASK_IRQFLAGS1_MODEREADY))
+            while(!(__rfm_register_read(registers::IRQFlags1) & registers::mask::ModeReady))
                 delayMicroseconds(100);
 
             return;
@@ -265,7 +265,7 @@ namespace mardev
         {
             __rfm_operating_mode(RFM_OPMODE_STANDBY);
             __rfm_register_modify(registers::OpMode,
-                                  RFM_REG_MASK_OPMODE_LISTEN,
+                                  registers::mask::Listen,
                                   1);
 
             return;
@@ -277,7 +277,7 @@ namespace mardev
                 (__rfm_register_read(registers::OpMode) & 128) | 32 | (mode << 2);
 
             __rfm_register_write(registers::OpMode, value);
-            __rfm_register_write(registers::OpMode, value & ~RFM_REG_MASK_OPMODE_LISTENABRT);
+            __rfm_register_write(registers::OpMode, value & ~registers::mask::ListenAbrt);
 
             return;
         }
@@ -306,13 +306,13 @@ namespace mardev
             // According to the datasheet, reading the temperature takes < 100us.
             // Impose a wait here instead of pestering the radio immediately.
 
-            __rfm_register_write(registers::Temp1, (1 << 3));
+            __rfm_register_write(registers::Temp1, registers::mask::TempMeasStart);
 
             #ifndef RFM_CONFIG_COMPACT
             delayMicroseconds(100 - 10);
             #endif
 
-            while(__rfm_register_read(registers::Temp1) & (1 << 2));
+            while(__rfm_register_read(registers::Temp1) & registers::mask::TempMeasRunning);
 
             return ~__rfm_register_read(registers::Temp2) - 94 + offset;
         }

@@ -88,7 +88,7 @@ namespace mardev
         inline bool fifo_is_empty()
         {
             return !(__rfm_register_read(registers::IRQFlags2)
-                     & RFM_REG_MASK_IRQFLAGS2_FIFONOTEMPTY);
+                     & registers::mask::FIFONotEmpty);
         }
 
         /** Returns true if the FIFO is full.
@@ -96,7 +96,7 @@ namespace mardev
         inline bool fifo_is_full()
         {
             return (__rfm_register_read(registers::IRQFlags2)
-                    & RFM_REG_MASK_IRQFLAGS2_FIFOFULL);
+                    & registers::mask::FIFOFull);
         }
 
         inline int16_t rssi()
@@ -131,7 +131,7 @@ namespace mardev
         inline void rfm_fifo_clear()
         {
             mardev::rfm69::__rfm_register_modify(registers::IRQFlags2,
-                                                 RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,
+                                                 registers::mask::FIFOOverrun,
                                                  1);
             return;
         }
@@ -141,7 +141,7 @@ namespace mardev
         inline bool rfm_packet_sent()
         {
             return __rfm_register_read(registers::IRQFlags2)
-                & RFM_REG_MASK_IRQFLAGS2_PACKETSENT;
+                & registers::mask::PacketSent;
         }
 
         /** Returns true when a payload is ready to be read from the FIFO.
@@ -149,7 +149,7 @@ namespace mardev
         inline bool rfm_packet_received()
         {
             return __rfm_register_read(registers::IRQFlags2)
-                & RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY;
+                & registers::mask::PayloadReady;
         }
 
         #ifdef RFM_FEATURE_LISTEN
