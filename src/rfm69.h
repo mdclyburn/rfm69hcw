@@ -5,6 +5,7 @@
 
 #include "rfm69_configuration.h"
 #include "rfm69_control.h"
+#include "rfm69_registers.h"
 
 namespace mardev
 {
@@ -82,17 +83,26 @@ namespace mardev
          */
         void __rfm_operating_mode(const uint8_t mode);
 
-        #define __rfm_rssi_value() - __rfm_register_read(RFM_REG_RSSIVALUE) / 2
-
         /** Returns true if the FIFO is empty.
          */
-        #define rfm_fifo_empty() !(__rfm_register_read(RFM_REG_IRQFLAGS2) \
-                                   & RFM_REG_MASK_IRQFLAGS2_FIFONOTEMPTY)
+        inline bool fifo_is_empty()
+        {
+            return !(__rfm_register_read(registers::IRQFlags2)
+                     & RFM_REG_MASK_IRQFLAGS2_FIFONOTEMPTY);
+        }
 
         /** Returns true if the FIFO is full.
          */
-        #define rfm_fifo_full() (__rfm_register_read(RFM_REG_IRQFLAGS2) \
-                                 & RFM_REG_MASK_IRQFLAGS2_FIFOFULL)
+        inline bool fifo_is_full()
+        {
+            return (__rfm_register_read(registers::IRQFlags2)
+                    & RFM_REG_MASK_IRQFLAGS2_FIFOFULL);
+        }
+
+        inline int16_t rssi()
+        {
+            return - __rfm_register_read(registers::RSSIValue) / 2;
+        }
 
         /** Write the contents of the FIFO to a buffer.
          *
@@ -118,22 +128,29 @@ namespace mardev
 
         /** Clears the contents of the FIFO.
          */
-        #define rfm_fifo_clear()                                        \
-            __rfm_register_modify(RFM_REG_IRQFLAGS2,                    \
-                                  RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,   \
-                                  1)
+        inline void rfm_fifo_clear()
+        {
+            mardev::rfm69::__rfm_register_modify(registers::IRQFlags2,
+                                                 RFM_REG_MASK_IRQFLAGS2_FIFOOVERRUN,
+                                                 1);
+            return;
+        }
 
         /** Returns true when the complete packet has been sent.
          */
-        #define rfm_packet_sent()                   \
-            (__rfm_register_read(RFM_REG_IRQFLAGS2) \
-             & RFM_REG_MASK_IRQFLAGS2_PACKETSENT)
+        inline bool rfm_packet_sent()
+        {
+            return __rfm_register_read(registers::IRQFlags2)
+                & RFM_REG_MASK_IRQFLAGS2_PACKETSENT;
+        }
 
         /** Returns true when a payload is ready to be read from the FIFO.
          */
-        #define rfm_packet_received()               \
-            (__rfm_register_read(RFM_REG_IRQFLAGS2) \
-             & RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY)
+        inline bool rfm_packet_received()
+        {
+            return __rfm_register_read(registers::IRQFlags2)
+                & RFM_REG_MASK_IRQFLAGS2_PAYLOADREADY;
+        }
 
         #ifdef RFM_FEATURE_LISTEN
 
