@@ -18,14 +18,6 @@ namespace mardev
          */
         void initialize();
 
-        /** Begin a transaction with the radio module.
-         */
-        void select();
-
-        /** End a transaction with the radio module.
-         */
-        void deselect();
-
         /** Read from a register.
          *
          * Reads value of the specified register from the radio.
