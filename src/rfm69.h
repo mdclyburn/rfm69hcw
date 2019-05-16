@@ -26,6 +26,9 @@ namespace mardev
          */
         void reset();
 
+        // ===== Register Operations ===================================================
+        // =============================================================================
+
         /** Read from a register.
          *
          * Reads value of the specified register from the radio.
@@ -71,6 +74,9 @@ namespace mardev
         void modify(const uint8_t address,
                     const uint8_t mask,
                     const uint8_t value);
+
+        // ===== FIFO ==================================================================
+        // =============================================================================
 
         /** Write the contents of the FIFO to a buffer.
          *
@@ -121,6 +127,9 @@ namespace mardev
                     & registers::mask::FIFOFull);
         }
 
+        // ===== Operating Modes =======================================================
+        // =============================================================================
+
         /** Returns the radio's current operating mode.
          */
         uint8_t mode();
@@ -133,11 +142,6 @@ namespace mardev
          * \param mode Operating mode to switch to.
          */
         void mode(const uint8_t mode);
-
-        inline int16_t rssi()
-        {
-            return - read(registers::RSSIValue) / 2;
-        }
 
         /** Returns true when the complete packet has been sent.
          */
@@ -169,8 +173,14 @@ namespace mardev
 
         #endif
 
-        // ===== Temperature ===========================================================
+        // ===== Metrics ===============================================================
         // =============================================================================
+
+        inline int16_t rssi()
+        {
+            return - read(registers::RSSIValue) / 2;
+        }
+
         #ifdef RFM_FEATURE_TEMPERATURE
 
         /** Return the reading of the CMOS temperature sensor.
