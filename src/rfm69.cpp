@@ -29,26 +29,20 @@ namespace mardev
             write(registers::TestDAGC, 0x30);
 
             // Node addressing.
+            // Listen for both unique and broadcast addresses.
             write(registers::NodeAdrs, RFM_CONFIG_NODEADDRESS);
-            modify(registers::PacketConfig1,
-                   registers::mask::AddressFiltering,
-                   2);
+            modify(registers::PacketConfig1, registers::mask::AddressFiltering, 2);
 
             // CRC
-            modify(registers::PacketConfig1,
-                   registers::mask::CRCOn,
-                   1); // Enable CRCs.
+            // Enable CRCs.
+            modify(registers::PacketConfig1, registers::mask::CRCOn, 1);
 
-            // Clear the FIFO and restart new packet reception when CRC check fails.
-            // PayloadReady is not issued.
-            modify(registers::PacketConfig1,
-                   registers::mask::CRCAutoClearOff,
-                   0);
+            // CRC auto-clear preference.
+            // Clear the FIFO and do not set PayloadReady.
+            modify(registers::PacketConfig1, registers::mask::CRCAutoClearOff, 0);
 
-            // Variable-length packet mode
-            modify(registers::PacketConfig1,
-                   registers::mask::PacketFormat,
-                   1);
+            // Variable-length packet mode.
+            modify(registers::PacketConfig1, registers::mask::PacketFormat, 1);
             write(registers::PayloadLength, 255);
 
             // Set data rate.
@@ -56,37 +50,32 @@ namespace mardev
             write(registers::BitRateLSB, RFM_CONFIG_BITRATE & 0x00FF);
 
             // Sync word
+            // TODO: extract the sync word back out into a configuration.
             const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
-            modify(registers::SyncConfig,
-                   registers::mask::SyncOn,
-                   1); // Enable use of the sync word.
-            modify(registers::SyncConfig,
-                   registers::mask::SyncSize,
-                   6); // Size of the sync word is taken to be 7 = 6 + 1.
-            write(registers::SyncValue1,
-                  sync_word,
-                  7); // Write the 56-bit sync word.
+
+            // Enable use of the sync word.
+            // Size of the sync word is taken to be 7 = 6 + 1.
+            // Write the 56-bit sync word.
+            modify(registers::SyncConfig, registers::mask::SyncOn, 1);
+            modify(registers::SyncConfig, registers::mask::SyncSize, 6);
+            write(registers::SyncValue1, sync_word, 7);
 
             #ifdef RFM_FEATURE_ENCRYPTION
             // Write the AES key and enable encryption if enabled.
             const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
             burst_write(registers::AESKey01, aes_key, 16);
-            modify(registers::PacketConfig2, 1, 1);
+            modify(registers::PacketConfig2, registers::mask::AESOn, 1);
             #else
             // Ensure encryption is disabled.
-            modify(registers::PacketConfig2, 1, 0);
+            modify(registers::PacketConfig2, registers::mask::AESOn, 0);
             #endif
 
             // Clear the FIFO.
-            modify(registers::IRQFlags2,
-                   registers::mask::FIFOOverrun,
-                   1);
+            modify(registers::IRQFlags2, registers::mask::FIFOOverrun, 1);
 
             // Transmit as soon as a byte is available.
-            modify(registers::FIFOThresh,
-                   registers::mask::TxStartCondition,
-                   1);
+            modify(registers::FIFOThresh, registers::mask::TxStartCondition, 1);
 
             // Preamble size
             write(registers::PreambleMSB, 0);
@@ -132,8 +121,7 @@ namespace mardev
         uint8_t write(const uint8_t address,
                       const uint8_t value)
         {
-            const uint8_t register_access =
-                address | 128;
+            const uint8_t register_access = address | 128;
 
             select();
             SPI.transfer(register_access);
@@ -276,4 +264,5 @@ namespace mardev
         }
     }
 }
+
 #endif
