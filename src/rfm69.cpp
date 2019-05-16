@@ -60,16 +60,16 @@ namespace mardev
             modify(registers::SyncConfig, registers::mask::SyncSize, 6);
             write(registers::SyncValue1, sync_word, 7);
 
-            #ifdef RFM_FEATURE_ENCRYPTION
-            // Write the AES key and enable encryption if enabled.
-            const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
+            // AES encryption
+            const uint8_t aes_key[] = {
+                0x4D, 0x22, 0x28, 0xAE,
+                0x54, 0x90, 0x80, 0x20,
+                0x00, 0x02, 0xFE, 0x10,
+                0x09, 0x00, 0x59, 0x11
+            };
 
-            burst_write(registers::AESKey01, aes_key, 16);
+            write(registers::AESKey01, aes_key, 16);
             modify(registers::PacketConfig2, registers::mask::AESOn, 1);
-            #else
-            // Ensure encryption is disabled.
-            modify(registers::PacketConfig2, registers::mask::AESOn, 0);
-            #endif
 
             // Clear the FIFO.
             modify(registers::IRQFlags2, registers::mask::FIFOOverrun, 1);
