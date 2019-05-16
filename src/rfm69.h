@@ -23,32 +23,34 @@ namespace mardev
          * Reads value of the specified register from the radio.
          * See rfm_registers.h for a list of registers.
          *
-         * \param rfm_register Address of the register to read the value of.
+         * \param address Address of the register to read the value of.
          */
-        uint8_t __rfm_register_read(const uint8_t rfm_register);
+        uint8_t read(const uint8_t address);
 
         /** Write to a register.
          *
          * Writes the specified value to the specified register.
          * See rfm_registers.h for a list of registers.
          *
-         * \param rfm_register Address of the register to write to.
+         * \param address Address of the register to write to.
          * \param value Value to write to the register.
+         *
+         * \returns Previous value stored in the register.
          */
-        uint8_t __rfm_register_write(const uint8_t rfm_register,
-                                     const uint8_t value);
+        uint8_t write(const uint8_t address,
+                      const uint8_t value);
 
         /** Write to registers sequentially.
          *
          * Writes the provided values to registers beginning with begin_register.
          *
-         * \param begin_register First register to write to.
+         * \param begin_address First register to write to.
          * \param values Values to write to registers.
          * \param length Number of values provided in values.
          */
-        void __rfm_register_burst_write(const uint8_t begin_register,
-                                        const uint8_t* const values,
-                                        const uint8_t length);
+        void write(const uint8_t begin_address,
+                   const uint8_t* const values,
+                   const uint8_t length);
 
         /** Set the specified option.
          *
@@ -58,9 +60,9 @@ namespace mardev
          * \param mask Bit mask of the bits to be set.
          * \param value Value to set in the mask.
          */
-        void __rfm_register_modify(const uint8_t rfm_register,
-                                   const uint8_t mask,
-                                   const uint8_t value);
+        void modify(const uint8_t address,
+                    const uint8_t mask,
+                    const uint8_t value);
 
         /** Returns the radio's current operating mode.
          */
@@ -79,7 +81,7 @@ namespace mardev
          */
         inline bool fifo_is_empty()
         {
-            return !(__rfm_register_read(registers::IRQFlags2)
+            return !(read(registers::IRQFlags2)
                      & registers::mask::FIFONotEmpty);
         }
 
@@ -87,13 +89,13 @@ namespace mardev
          */
         inline bool fifo_is_full()
         {
-            return (__rfm_register_read(registers::IRQFlags2)
+            return (read(registers::IRQFlags2)
                     & registers::mask::FIFOFull);
         }
 
         inline int16_t rssi()
         {
-            return - __rfm_register_read(registers::RSSIValue) / 2;
+            return - read(registers::RSSIValue) / 2;
         }
 
         /** Write the contents of the FIFO to a buffer.
@@ -122,7 +124,7 @@ namespace mardev
          */
         inline void rfm_fifo_clear()
         {
-            mardev::rfm69::__rfm_register_modify(registers::IRQFlags2,
+            mardev::rfm69::modify(registers::IRQFlags2,
                                                  registers::mask::FIFOOverrun,
                                                  1);
             return;
@@ -132,7 +134,7 @@ namespace mardev
          */
         inline bool rfm_packet_sent()
         {
-            return __rfm_register_read(registers::IRQFlags2)
+            return read(registers::IRQFlags2)
                 & registers::mask::PacketSent;
         }
 
@@ -140,7 +142,7 @@ namespace mardev
          */
         inline bool rfm_packet_received()
         {
-            return __rfm_register_read(registers::IRQFlags2)
+            return read(registers::IRQFlags2)
                 & registers::mask::PayloadReady;
         }
 
