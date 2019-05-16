@@ -4,8 +4,6 @@
 
 /** Configuration
  *
- * RFM_CONFIG_NODEADDRESS
- *     8-bit address the node listens for packets sent to.
  * RFM_CONFIG_BITRATE
  *     Rate of data transmission.
  *     Defaults to 4.8kbps.
@@ -17,10 +15,10 @@
  *      38.4kbps    0x0341
  *      76.8kbps    0x01A1
  *     153.6kbps    0x00D0
- * RFM_CONFIG_COMPACT
- *     Drop unneeded code where possible.
  * RFM_CONFIG_ENCRYPTIONKEY
  *     16-byte length encryption key used to encrypt payloads.
+ * RFM_CONFIG_NODEADDRESS
+ *     8-bit address the node listens for packets sent to.
  * RFM_CONFIG_PACKETFIXED
  *     Packet size is set ahead of time.
  *     The size of packets should be specified in RFM_CONFIG_PACKETSIZE.
@@ -38,8 +36,7 @@
  *     Sync word used to filter packets on.
  *     This value must be an array of length RFM_CONFIG_SYNCWORDLENGTH + 1.
  * RFM_CONFIG_SYNCWORDLENGTH
- *     Additional bytes to the sync word length (up to 7 additional bytes)
- *     For example, if set to 5 then the sync word will be 6 bytes long.
+ *     Length of the sync word in bytes.
  */
 
 #define RFM_CONFIG_ENCRYPTIONKEY { 0x4D, 0x22, 0x28, 0xAE, \
@@ -49,17 +46,9 @@
 
 #define RFM_CONFIG_NODEADDRESS 0x02
 
-#define RFM_CONFIG_PACKETFIXED
-
-#define RFM_CONFIG_PACKETSIZE 20
-
-// #define RFM_CONFIG_PACKETVARIABLE
-
 #define RFM_CONFIG_PINRESET P1_4
 
 #define RFM_CONFIG_PINSS P1_3
-
-// #define RFM_CONFIG_PINPAYLOADREADY 11
 
 #define RFM_CONFIG_SYNCWORD { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 }
 

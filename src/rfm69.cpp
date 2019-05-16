@@ -51,14 +51,14 @@ namespace mardev
 
             // Sync word
             // TODO: extract the sync word back out into a configuration.
-            const uint8_t sync_word[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
+            const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
 
             // Enable use of the sync word.
             // Size of the sync word is taken to be 7 = 6 + 1.
             // Write the 56-bit sync word.
             modify(registers::SyncConfig, registers::mask::SyncOn, 1);
-            modify(registers::SyncConfig, registers::mask::SyncSize, 6);
-            write(registers::SyncValue1, sync_word, 7);
+            modify(registers::SyncConfig, registers::mask::SyncSize, RFM_CONFIG_SYNCWORDLENGTH);
+            write(registers::SyncValue1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
 
             // AES encryption
             const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
@@ -156,7 +156,7 @@ namespace mardev
         void read_fifo(uint8_t* const buffer)
         {
             uint8_t i = 0;
-            while((read(registers::IRQFlags2) & 64) && i < RFM_CONFIG_PACKETSIZE)
+            while(!fifo_is_empty())
             {
                 buffer[i++] = read(registers::FIFO);
             }
@@ -167,7 +167,8 @@ namespace mardev
         uint8_t write_fifo(const uint8_t* const buffer,
                            const uint8_t size)
         {
-            if (size > RFM_CONFIG_PACKETSIZE)
+            // Limit for the library is at 66 bytes (at least for now).
+            if (size > 66)
                 return 1;
 
             // FIFO full
