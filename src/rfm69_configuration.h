@@ -56,40 +56,17 @@
 
 /** Features
  *
- * RFM_FEATURE_ADDRESSING
- *     Use a node address and send packets with addresses.
- * RFM_FEATURE_CRC
- *     Not implemented.
- * RFM_FEATURE_ENCRYPTION (~ +160 bytes)
- *     Use 128-bit AES to encrypt message packets.
- *     The encryption key should be specified in RFM_CONFIG_ENCRYPTIONKEY.
  * RFM_FEATURE_LISTEN
  *     Listen for messages when in standby mode.
- * RFM_FEATURE_SYNCWORD (~ +276 bytes, 4-byte sync word)
- *     Filter incoming packets by ensuring they match the sync word.
- *     The sync word is given by RFM_CONFIG_SYNCWORD.
- *     RFM_CONFIG_SYNCWORDLENGTH must also be specified.
- * RFM_FEATURE_RESET
- *     Enable resetting the RFM69 with the RESET pin.
  * RFM_FEATURE_TEMPERATURE
  *     Supplies rfm_temperature() to read the CMOS temperature sensor.
  */
-
-// #define RFM_FEATURE_CRC
-
-// #define RFM_FEATURE_ADDRESSING
-
-// #define RFM_FEATURE_ENCRYPTION
 
 // #define RFM_FEATURE_LISTEN
 
 #define RFM_FEATURE_RESET
 
-#define RFM_FEATURE_SYNCWORD
-
 #define RFM_FEATURE_TEMPERATURE
-
-// #define RFM_DEBUG
 
 // ===== Autoconfiguration =====================================================
 // =============================================================================
