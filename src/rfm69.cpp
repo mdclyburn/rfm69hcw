@@ -61,12 +61,7 @@ namespace mardev
             write(registers::SyncValue1, sync_word, 7);
 
             // AES encryption
-            const uint8_t aes_key[] = {
-                0x4D, 0x22, 0x28, 0xAE,
-                0x54, 0x90, 0x80, 0x20,
-                0x00, 0x02, 0xFE, 0x10,
-                0x09, 0x00, 0x59, 0x11
-            };
+            const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
 
             write(registers::AESKey01, aes_key, 16);
             modify(registers::PacketConfig2, registers::mask::AESOn, 1);
