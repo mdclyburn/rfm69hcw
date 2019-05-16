@@ -18,6 +18,14 @@ namespace mardev
          */
         void initialize();
 
+        /** Reset the radio.
+         *
+         * Performs a POR on the radio.
+         * When the function returns, the radio is immediately ready when this function returns.
+         * This function requires RFM_FEATURE_RESET.
+         */
+        void reset();
+
         /** Read from a register.
          *
          * Reads value of the specified register from the radio.
@@ -160,14 +168,6 @@ namespace mardev
         void __rfm_abort_listen_mode(const uint8_t mode);
 
         #endif
-
-        /** Reset the radio.
-         *
-         * Performs a POR on the radio.
-         * When the function returns, the radio is immediately ready when this function returns.
-         * This function requires RFM_FEATURE_RESET.
-         */
-        void reset();
 
         // ===== Temperature ===========================================================
         // =============================================================================
