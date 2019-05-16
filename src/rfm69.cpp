@@ -119,23 +119,12 @@ namespace mardev
 
         uint8_t read(const uint8_t address)
         {
-            const uint8_t register_access =
-                address & 127;
-
-            #ifdef RFM_DEBUG
-            Serial.print("RFM: read register ");
-            Serial.println(address);
-            #endif
+            const uint8_t register_access = address & 127;
 
             select();
             SPI.transfer(register_access);
             const uint8_t value = SPI.transfer(0);
             deselect();
-
-            #ifdef RFM_DEBUG
-            Serial.print("RFM: register read returned: ");
-            Serial.println(value);
-            #endif
 
             return value;
         }
@@ -146,20 +135,10 @@ namespace mardev
             const uint8_t register_access =
                 address | 128;
 
-            #ifdef RFM_DEBUG
-            Serial.print("RFM: write register ");
-            Serial.println(address);
-            #endif
-
             select();
             SPI.transfer(register_access);
             const uint8_t old_value = SPI.transfer(value);
             deselect();
-
-            #ifdef RFM_DEBUG
-            Serial.print("RFM: register write returned old value: ");
-            Serial.println(old_value);
-            #endif
 
             return old_value;
         }
@@ -168,13 +147,6 @@ namespace mardev
                    const uint8_t* const values,
                    const uint8_t length)
         {
-            #ifdef RFM_DEBUG
-            Serial.print("Burst register write from ");
-            Serial.print(begin_address);
-            Serial.print(" length ");
-            Serial.println(length);
-            #endif
-
             select();
             SPI.transfer(begin_address | 128);
             for(uint8_t offset = 0; offset < length; offset++)
@@ -188,13 +160,6 @@ namespace mardev
                     const uint8_t mask,
                     const uint8_t value)
         {
-            #ifdef RFM_DEBUG
-            Serial.print("Modify register by inserting ");
-            Serial.print(value);
-            Serial.print(" into ");
-            Serial.println(address);
-            #endif
-
             uint8_t offset = 0;
             while(!((mask >> offset) & 1))
                 offset++;
@@ -210,9 +175,7 @@ namespace mardev
             uint8_t i = 0;
             while((read(registers::IRQFlags2) & 64) && i < RFM_CONFIG_PACKETSIZE)
             {
-                Serial.print("Saving byte to "); Serial.println(i);
                 buffer[i++] = read(registers::FIFO);
-                Serial.print("Value: "); Serial.println(buffer[i-1], HEX);
             }
 
             return;
@@ -228,13 +191,10 @@ namespace mardev
             if (read(registers::IRQFlags2) & 128)
                 return 2;
 
-            // #if RFM_CONFIG_PACKETSIZE <= 66
-            // burst_write(registers::FIFO, buffer, size);
-            // #else
+            // TODO: turn this into a single burst-write.
             uint8_t i = 0;
             while(i < size && !(read(registers::IRQFlags2) & 128))
                 write(registers::FIFO, buffer[i++]);
-            // #endif
 
             return 0;
         }
