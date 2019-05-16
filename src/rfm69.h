@@ -133,7 +133,7 @@ namespace mardev
 
         /** Returns true when the complete packet has been sent.
          */
-        inline bool rfm_packet_sent()
+        inline bool packet_sent()
         {
             return read(registers::IRQFlags2)
                 & registers::mask::PacketSent;
@@ -141,7 +141,7 @@ namespace mardev
 
         /** Returns true when a payload is ready to be read from the FIFO.
          */
-        inline bool rfm_packet_received()
+        inline bool packet_received()
         {
             return read(registers::IRQFlags2)
                 & registers::mask::PayloadReady;
