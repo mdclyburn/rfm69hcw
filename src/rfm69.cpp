@@ -3,8 +3,6 @@
 #include "rfm69.h"
 #include "rfm69_registers.h"
 
-using namespace mardev::rfm69;
-
 namespace mardev
 {
     namespace rfm69
@@ -261,7 +259,7 @@ namespace mardev
 
         #ifdef RFM_FEATURE_LISTEN
 
-        void __rfm_listen_mode()
+        void start_listen_mode()
         {
             __rfm_operating_mode(RFM_OPMODE_STANDBY);
             modify(registers::OpMode,
@@ -271,7 +269,7 @@ namespace mardev
             return;
         }
 
-        void __rfm_abort_listen_mode(const uint8_t mode)
+        void abort_listen_mode(const uint8_t mode)
         {
             const uint8_t value =
                 (read(registers::OpMode) & 128) | 32 | (mode << 2);
@@ -288,7 +286,7 @@ namespace mardev
         // =============================================================================
         #ifdef RFM_FEATURE_TEMPERATURE
 
-        uint8_t rfm_temperature(const int8_t offset)
+        uint8_t temperature(const int8_t offset)
         {
             /* RFM_REG_TEMP1
              * bit 7 - 4: unused
@@ -316,7 +314,6 @@ namespace mardev
 
             return ~read(registers::Temp2) - 94 + offset;
         }
-
     }
 }
 #endif

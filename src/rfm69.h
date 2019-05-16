@@ -163,13 +163,13 @@ namespace mardev
 
         /** Enter listening mode.
          */
-        void __rfm_listen_mode();
+        void start_listen_mode();
 
         /** Abort listen mode.
          *
          * \param mode Operating mode to transition to.
          */
-        void __rfm_abort_listen_mode(const uint8_t mode);
+        void abort_listen_mode(const uint8_t mode);
 
         #endif
 
@@ -192,7 +192,7 @@ namespace mardev
          *
          * \param offset adjustment value to add to the returned value
          */
-        uint8_t rfm_temperature(const int8_t offset = 0);
+        uint8_t temperature(const int8_t offset = 0);
 
         #endif
     }
