@@ -207,25 +207,7 @@ namespace mardev
             return;
         }
 
-        uint8_t mode()
-        {
-            return (read(registers::OpMode) & registers::mask::Mode) >> 2;
-        }
-
-        void mode(const uint8_t mode)
-        {
-            modify(
-                registers::OpMode,
-                registers::mask::Mode,
-                mode);
-
-            while(!(read(registers::IRQFlags1) & registers::mask::ModeReady))
-                delayMicroseconds(100);
-
-            return;
-        }
-
-        void rfm_fifo_read(uint8_t* const buffer)
+        void read_fifo(uint8_t* const buffer)
         {
             uint8_t i = 0;
             while((read(registers::IRQFlags2) & 64) && i < RFM_CONFIG_PACKETSIZE)
@@ -238,7 +220,8 @@ namespace mardev
             return;
         }
 
-        uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size)
+        uint8_t write_fifo(const uint8_t* const buffer,
+                           const uint8_t size)
         {
             if (size > RFM_CONFIG_PACKETSIZE)
                 return 1;
@@ -256,6 +239,24 @@ namespace mardev
             // #endif
 
             return 0;
+        }
+
+        uint8_t mode()
+        {
+            return (read(registers::OpMode) & registers::mask::Mode) >> 2;
+        }
+
+        void mode(const uint8_t mode)
+        {
+            modify(
+                registers::OpMode,
+                registers::mask::Mode,
+                mode);
+
+            while(!(read(registers::IRQFlags1) & registers::mask::ModeReady))
+                delayMicroseconds(100);
+
+            return;
         }
 
         #ifdef RFM_FEATURE_LISTEN

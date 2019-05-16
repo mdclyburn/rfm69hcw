@@ -64,18 +64,38 @@ namespace mardev
                     const uint8_t mask,
                     const uint8_t value);
 
-        /** Returns the radio's current operating mode.
+        /** Write the contents of the FIFO to a buffer.
+         *
+         * Copies the data from the RFM FIFO to the given buffer.
+         * Amount of space needed is up to the max length of a message.
+         *
+         * \param buffer Buffer to write the contents of the FIFO to. It must be large enough to hold the maximum message size.
          */
-        uint8_t mode();
+        void read_fifo(uint8_t* const buffer);
 
-        /** Set the radio's operating mode.
+        /** Write the contents of a buffer to the FIFO.
          *
-         * Transitions the radio to the specified operating mode.
-         * This function will not return until the operating mode is ready (ModeReady is set).
+         * Copies the data from the buffer to the FIFO.
+         * Returns
+         *  0 = success
+         *  1 = payload too large
+         *  2 = FIFO is currently full and no bytes were written
          *
-         * \param mode Operating mode to switch to.
+         * \param buffer Buffer to write to the FIFO.
+         * \param size Length of the buffer.
          */
-        void mode(const uint8_t mode);
+        uint8_t write_fifo(const uint8_t* const buffer,
+                           const uint8_t size);
+
+        /** Clears the contents of the FIFO.
+         */
+        inline void clear_fifo()
+        {
+            mardev::rfm69::modify(registers::IRQFlags2,
+                                  registers::mask::FIFOOverrun,
+                                  1);
+            return;
+        }
 
         /** Returns true if the FIFO is empty.
          */
@@ -93,41 +113,22 @@ namespace mardev
                     & registers::mask::FIFOFull);
         }
 
+        /** Returns the radio's current operating mode.
+         */
+        uint8_t mode();
+
+        /** Set the radio's operating mode.
+         *
+         * Transitions the radio to the specified operating mode.
+         * This function will not return until the operating mode is ready (ModeReady is set).
+         *
+         * \param mode Operating mode to switch to.
+         */
+        void mode(const uint8_t mode);
+
         inline int16_t rssi()
         {
             return - read(registers::RSSIValue) / 2;
-        }
-
-        /** Write the contents of the FIFO to a buffer.
-         *
-         * Copies the data from the RFM FIFO to the given buffer.
-         * Amount of space needed is up to the max length of a message.
-         *
-         * \param buffer Buffer to write the contents of the FIFO to. It must be large enough to hold the maximum message size.
-         */
-        void rfm_fifo_read(uint8_t* const buffer);
-
-        /** Write the contents of a buffer to the FIFO.
-         *
-         * Copies the data from the buffer to the FIFO.
-         * Returns
-         *  0 = success
-         *  1 = payload too large
-         *  2 = FIFO is currently full and no bytes were written
-         *
-         * \param buffer Buffer to write to the FIFO.
-         * \param size Length of the buffer.
-         */
-        uint8_t rfm_fifo_write(const uint8_t* const buffer, const uint8_t size);
-
-        /** Clears the contents of the FIFO.
-         */
-        inline void rfm_fifo_clear()
-        {
-            mardev::rfm69::modify(registers::IRQFlags2,
-                                                 registers::mask::FIFOOverrun,
-                                                 1);
-            return;
         }
 
         /** Returns true when the complete packet has been sent.
