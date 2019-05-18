@@ -205,21 +205,25 @@ namespace mardev
 
         void start_listen_mode()
         {
-            __rfm_operating_mode(RFM_OPMODE_STANDBY);
-            modify(registers::OpMode,
-                   registers::mask::Listen,
-                   1);
+            // Go to standby mode to allow listen mode to be enabled.
+            // Mode will be standby, so after listening completes, the transceiver will
+            //   return to standby mode with ListenEnd set to 01 (the default).
+            mode(RFM_OPMODE_STANDBY);
+
+            modify(registers::OpMode, registers::mask::Listen, 1);
 
             return;
         }
 
-        void abort_listen_mode(const uint8_t mode)
+        void abort_listen_mode(const uint8_t target_mode)
         {
             const uint8_t value =
-                (read(registers::OpMode) & 128) | 32 | (mode << 2);
+                (read(registers::OpMode) & 128) // Remove all but the FIFO sequencer setting.
+                | 32 // Enable ListenAbort.
+                | (target_mode << 2); // Set the desired mode.
 
             write(registers::OpMode, value);
-            write(registers::OpMode, value & ~registers::mask::ListenAbrt);
+            mode(target_mode);
 
             return;
         }

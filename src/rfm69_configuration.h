@@ -62,7 +62,7 @@
  *     Supplies rfm_temperature() to read the CMOS temperature sensor.
  */
 
-// #define RFM_FEATURE_LISTEN
+#define RFM_FEATURE_LISTEN
 
 #define RFM_FEATURE_RESET
 
@@ -152,9 +152,9 @@
 
 /* RFM_FEATURE_LISTEN: RFM_CONFIG_PINPAYLOADREADY
  */
-#if defined(RFM_FEATURE_LISTEN) && !defined(RFM_CONFIG_PINPAYLOADREADY)
-  #error To use listen mode: define an interrupt pin with RFM_CONFIG_PAYLOADREADY.
-#endif
+// #if defined(RFM_FEATURE_LISTEN) && !defined(RFM_CONFIG_PINPAYLOADREADY)
+//   #error To use listen mode: define an interrupt pin with RFM_CONFIG_PAYLOADREADY.
+// #endif
 
 /* RFM_FEATURE_SYNCWORD: RFM_CONFIG_SYNCWORD and RFM_CONFIG_SYNCWORDLENGTH must be supplied.
  */
