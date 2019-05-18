@@ -159,20 +159,6 @@ namespace mardev
                 & registers::mask::PayloadReady;
         }
 
-        #ifdef RFM_FEATURE_LISTEN
-
-        /** Enter listening mode.
-         */
-        void start_listen_mode();
-
-        /** Abort listen mode.
-         *
-         * \param mode Operating mode to transition to.
-         */
-        void abort_listen_mode(const uint8_t mode);
-
-        #endif
-
         // ===== Metrics ===============================================================
         // =============================================================================
 

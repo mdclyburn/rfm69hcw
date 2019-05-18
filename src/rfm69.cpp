@@ -73,7 +73,7 @@ namespace mardev
             modify(registers::FIFOThresh, registers::mask::TxStartCondition, 1);
 
             // Preamble size
-            write(registers::PreambleMSB, 0);
+            write(registers::PreambleMSB, 0x00);
             write(registers::PreambleLSB, 0x40);
 
             return;
@@ -200,35 +200,6 @@ namespace mardev
 
             return;
         }
-
-        #ifdef RFM_FEATURE_LISTEN
-
-        void start_listen_mode()
-        {
-            // Go to standby mode to allow listen mode to be enabled.
-            // Mode will be standby, so after listening completes, the transceiver will
-            //   return to standby mode with ListenEnd set to 01 (the default).
-            mode(RFM_OPMODE_STANDBY);
-
-            modify(registers::OpMode, registers::mask::Listen, 1);
-
-            return;
-        }
-
-        void abort_listen_mode(const uint8_t target_mode)
-        {
-            const uint8_t value =
-                (read(registers::OpMode) & 128) // Remove all but the FIFO sequencer setting.
-                | 32 // Enable ListenAbort.
-                | (target_mode << 2); // Set the desired mode.
-
-            write(registers::OpMode, value);
-            mode(target_mode);
-
-            return;
-        }
-
-        #endif
 
         // ===== Temperature ===========================================================
         // =============================================================================
