@@ -1,8 +1,11 @@
 #ifndef RFM69_REGISTERS_H
 #define RFM69_REGISTERS_H
 
-/** RFM69 configuration constants.
- * It is important that the values be defined in this header to save space in resulting binary.
+#include <stdint.h>
+
+/** RFM69 register constants.
+ * It is important that the values be defined in this header to save
+ * space in resulting binary.
  */
 
 namespace mardev

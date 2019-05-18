@@ -1,7 +1,8 @@
 #include <SPI.h>
 
-#include "rfm69.h"
-#include "rfm69_registers.h"
+#include "configuration.h"
+#include "core.h"
+#include "registers.h"
 
 namespace mardev
 {
@@ -152,88 +153,5 @@ namespace mardev
 
             return;
         }
-
-        void read_fifo(uint8_t* const buffer)
-        {
-            uint8_t i = 0;
-            while(!fifo_is_empty())
-            {
-                buffer[i++] = read(registers::FIFO);
-            }
-
-            return;
-        }
-
-        uint8_t write_fifo(const uint8_t* const buffer,
-                           const uint8_t size)
-        {
-            // Limit for the library is at 66 bytes (at least for now).
-            if (size > 66)
-                return 1;
-
-            // FIFO full
-            if (read(registers::IRQFlags2) & 128)
-                return 2;
-
-            // TODO: turn this into a single burst-write.
-            uint8_t i = 0;
-            while(i < size && !(read(registers::IRQFlags2) & 128))
-                write(registers::FIFO, buffer[i++]);
-
-            return 0;
-        }
-
-        uint8_t mode()
-        {
-            return (read(registers::OpMode) & registers::mask::Mode) >> 2;
-        }
-
-        void mode(const uint8_t mode)
-        {
-            modify(
-                registers::OpMode,
-                registers::mask::Mode,
-                mode);
-
-            while(!(read(registers::IRQFlags1) & registers::mask::ModeReady))
-                delayMicroseconds(100);
-
-            return;
-        }
-
-        // ===== Temperature ===========================================================
-        // =============================================================================
-        #ifdef RFM_FEATURE_TEMPERATURE
-
-        uint8_t temperature(const int8_t offset)
-        {
-            /* RFM_REG_TEMP1
-             * bit 7 - 4: unused
-             * bit 3: triggers temperature measurement when set to 1
-             * bit 2: will be set to 1 while measurement is running
-             * bit 1, 0: unused
-             */
-
-            // The temperature sensor can only be used in standby or frequency
-            // synthesizer modes but not in receive mode.
-            const uint8_t current_mode = mode();
-            if(current_mode == RFM_OPMODE_SLEEP || current_mode == RFM_OPMODE_RECEIVE)
-                return 0;
-
-            // According to the datasheet, reading the temperature takes < 100us.
-            // Impose a wait here instead of pestering the radio immediately.
-
-            write(registers::Temp1, registers::mask::TempMeasStart);
-
-            #ifndef RFM_CONFIG_COMPACT
-            delayMicroseconds(100 - 10);
-            #endif
-
-            while(read(registers::Temp1) & registers::mask::TempMeasRunning);
-
-            return ~read(registers::Temp2) - 94 + offset;
-        }
     }
 }
-
-#endif
