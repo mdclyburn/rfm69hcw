@@ -1,24 +1,35 @@
-#include <SPI.h>
+#include <digital-io.h>
+#include <timer.h>
+#include <usci-spi.h>
 
 #include "configuration.h"
 #include "core.h"
 #include "registers.h"
 
+namespace usci  = mardev::msp430::usci;
+namespace spi   = usci::spi;
+namespace dio   = mardev::msp430::digital_io;
+namespace timer = mardev::msp430::timer;
+
 namespace mardev::rfm69
 {
     void initialize()
     {
-        SPI.begin();
-        SPI.setDataMode(SPI_MODE0);
-        SPI.setBitOrder(MSBFIRST);
+        spi::initialize(
+            usci::Module::B0,
+            usci::UCMODE::SPI3,
+            spi::UCSSELx::SMCLK,
+            spi::UCCKPH::P0,
+            spi::UCCKPL::P1,
+            spi::UCMSB::MSBFirst);
 
         // Set up digital pins.
-        pinMode(RFM_CONFIG_PINSS, OUTPUT);
+        dio::set_pin_mode(RFM_CONFIG_PINSS, dio::IO::Output);
 
         // Set up reset.
-        pinMode(RFM_CONFIG_PINRESET, OUTPUT);
+        dio::set_pin_mode(RFM_CONFIG_PINRESET, dio::IO::Output);
         reset();
-        delay(100);
+        timer::delay(250);
 
         // Recommended Settings
         write(registers::LNA, 0x88);
@@ -80,23 +91,23 @@ namespace mardev::rfm69
 
     void reset()
     {
-        digitalWrite(RFM_CONFIG_PINRESET, HIGH);
-        delayMicroseconds(100);
-        digitalWrite(RFM_CONFIG_PINRESET, LOW);
-        delay(5);
+        dio::write(RFM_CONFIG_PINRESET, dio::Logic::High);
+        timer::delay(1000);
+        dio::write(RFM_CONFIG_PINRESET, dio::Logic::Low);
+        timer::delay(500);
 
         return;
     }
 
     void select()
     {
-        digitalWrite(RFM_CONFIG_PINSS, LOW);
+        dio::write(RFM_CONFIG_PINSS, dio::Logic::Low);
         return;
     }
 
     void deselect()
     {
-        digitalWrite(RFM_CONFIG_PINSS, HIGH);
+        dio::write(RFM_CONFIG_PINSS, dio::Logic::High);
         return;
     }
 
@@ -105,8 +116,8 @@ namespace mardev::rfm69
         const uint8_t register_access = address & 127;
 
         select();
-        SPI.transfer(register_access);
-        const uint8_t value = SPI.transfer(0);
+        spi::write(usci::Module::B0, register_access);
+        const uint8_t value = spi::write(usci::Module::B0, 0);
         deselect();
 
         return value;
@@ -118,8 +129,8 @@ namespace mardev::rfm69
         const uint8_t register_access = address | 128;
 
         select();
-        SPI.transfer(register_access);
-        const uint8_t old_value = SPI.transfer(value);
+        spi::write(usci::Module::B0, register_access);
+        const uint8_t old_value = spi::write(usci::Module::B0, value);
         deselect();
 
         return old_value;
@@ -130,9 +141,9 @@ namespace mardev::rfm69
                const uint8_t length)
     {
         select();
-        SPI.transfer(begin_address | 128);
+        spi::write(usci::Module::B0, begin_address | 128);
         for(uint8_t offset = 0; offset < length; offset++)
-            SPI.transfer(values[offset]);
+            spi::write(usci::Module::B0, values[offset]);
         deselect();
 
         return;
