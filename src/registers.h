@@ -107,6 +107,11 @@ namespace mardev
                 const uint8_t ListenAbrt = 32;
                 const uint8_t Listen     = 64;
                 const uint8_t SeqOff     = 128;
+                const uint8_t OpMode_Sleep                = 0;
+                const uint8_t OpMode_Standby              = 1 << 2;
+                const uint8_t OpMode_FrequencySynthesizer = 2 << 2;
+                const uint8_t OpMode_Transmitter          = 3 << 2;
+                const uint8_t OpMode_Receiver             = 4 << 2;
 
                 // Listen1
                 const uint8_t ListenEnd       = 6;        // 00000110
