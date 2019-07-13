@@ -5,7 +5,7 @@ GCCVERSION = $(shell ls $(MSP430PATH)/lib/gcc/msp430-elf | head -n1)
 MDLPATH = ../../msp430/src
 
 CC = $(MSP430PATH)/bin/msp430-elf-gcc
-CFLAGS = -I $(MDLPATH) -Os -nostdlib -std=c++17 -ffunction-sections -fdata-sections -mmcu=$(MSP430MCU)
+CFLAGS = -I $(MDLPATH) -Os -std=c++17 -nostdlib -ffreestanding -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -fno-unwind-tables -fomit-frame-pointer -fno-exceptions -mmcu=$(MSP430MCU)
 
 CXX = $(MSP430PATH)/bin/msp430-elf-g++
 CXXFLAGS = $(CFLAGS)

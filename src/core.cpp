@@ -13,6 +13,16 @@ namespace timer = mardev::msp430::timer;
 
 namespace mardev::rfm69
 {
+    const uint8_t AESKey[] =
+    {
+        0x4D, 0x22, 0x28, 0xAE,
+        0x54, 0x90, 0x80, 0x20,
+        0x00, 0x02, 0xFE, 0x10,
+        0x09, 0x00, 0x59, 0x11
+    };
+
+    const uint8_t SyncWord[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
+
     void initialize()
     {
         spi::initialize(
@@ -20,11 +30,12 @@ namespace mardev::rfm69
             usci::UCMODE::SPI3,
             spi::UCSSELx::SMCLK,
             spi::UCCKPH::P0,
-            spi::UCCKPL::P1,
+            spi::UCCKPL::P0,
             spi::UCMSB::MSBFirst);
 
         // Set up digital pins.
         dio::set_pin_mode(RFM_CONFIG_PINSS, dio::IO::Output);
+        dio::write(RFM_CONFIG_PINSS, dio::Logic::High);
 
         // Set up reset.
         dio::set_pin_mode(RFM_CONFIG_PINRESET, dio::IO::Output);
@@ -61,19 +72,17 @@ namespace mardev::rfm69
 
         // Sync word
         // TODO: extract the sync word back out into a configuration.
-        const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
+        // const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
 
         // Enable use of the sync word.
         // Size of the sync word is taken to be 7 = 6 + 1.
         // Write the 56-bit sync word.
         modify(registers::SyncConfig, registers::mask::SyncOn, 1);
         modify(registers::SyncConfig, registers::mask::SyncSize, RFM_CONFIG_SYNCWORDLENGTH);
-        write(registers::SyncValue1, sync_word, RFM_CONFIG_SYNCWORDLENGTH+1);
+        write(registers::SyncValue1, SyncWord, RFM_CONFIG_SYNCWORDLENGTH+1);
 
         // AES encryption
-        const uint8_t aes_key[] = RFM_CONFIG_ENCRYPTIONKEY;
-
-        write(registers::AESKey01, aes_key, 16);
+        write(registers::AESKey01, AESKey, 16);
         modify(registers::PacketConfig2, registers::mask::AESOn, 1);
 
         // Clear the FIFO.
