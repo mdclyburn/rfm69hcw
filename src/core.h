@@ -5,8 +5,6 @@
 
 namespace mardev::rfm69
 {
-    extern const uint8_t AESKey[];
-
     /** Initialize the RFM69HCW to a known state.
      *
      * Writes configuration to the RFM69's registers.
