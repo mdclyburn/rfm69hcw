@@ -13,20 +13,13 @@ namespace timer = mardev::msp430::timer;
 
 namespace mardev::rfm69
 {
-    const uint8_t AESKey[] =
-    {
-        0x4D, 0x22, 0x28, 0xAE,
-        0x54, 0x90, 0x80, 0x20,
-        0x00, 0x02, 0xFE, 0x10,
-        0x09, 0x00, 0x59, 0x11
-    };
-
-    const uint8_t SyncWord[] = { 0xAC, 0xDC, 0xFF, 0x06, 0x05, 0x04, 0x03 };
+    const uint8_t AESKey[] = RFM_CONFIG_ENCRYPTIONKEY;
+    const uint8_t SyncWord[] = RFM_CONFIG_SYNCWORD;
 
     void initialize()
     {
         spi::initialize(
-            usci::Module::B0,
+            RFM_CONFIG_UCMODULE,
             usci::UCMODE::SPI3,
             spi::UCSSELx::SMCLK,
             spi::UCCKPH::P0,

@@ -54,6 +54,8 @@
 
 #define RFM_CONFIG_SYNCWORDLENGTH 6
 
+#define RFM_CONFIG_UCMODULE usci::Module::B0
+
 /** Features
  *
  * RFM_FEATURE_TEMPERATURE
