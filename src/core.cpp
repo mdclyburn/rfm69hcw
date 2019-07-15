@@ -118,8 +118,8 @@ namespace mardev::rfm69
         const uint8_t register_access = address & 127;
 
         select();
-        spi::write(usci::Module::B0, register_access);
-        const uint8_t value = spi::write(usci::Module::B0, 0);
+        spi::write(RFM_UCMODULE, register_access);
+        const uint8_t value = spi::write(RFM_UCMODULE, 0);
         deselect();
 
         return value;
@@ -131,8 +131,8 @@ namespace mardev::rfm69
         const uint8_t register_access = address | 128;
 
         select();
-        spi::write(usci::Module::B0, register_access);
-        const uint8_t old_value = spi::write(usci::Module::B0, value);
+        spi::write(RFM_UCMODULE, register_access);
+        const uint8_t old_value = spi::write(RFM_UCMODULE, value);
         deselect();
 
         return old_value;
@@ -143,9 +143,9 @@ namespace mardev::rfm69
                const uint8_t length)
     {
         select();
-        spi::write(usci::Module::B0, begin_address | 128);
+        spi::write(RFM_UCMODULE, begin_address | 128);
         for(uint8_t offset = 0; offset < length; offset++)
-            spi::write(usci::Module::B0, values[offset]);
+            spi::write(RFM_UCMODULE, values[offset]);
         deselect();
 
         return;
