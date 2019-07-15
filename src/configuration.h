@@ -39,11 +39,6 @@
  *     Length of the sync word in bytes.
  */
 
-#define RFM_CONFIG_ENCRYPTIONKEY { 0x4D, 0x22, 0x28, 0xAE, \
-                                   0x54, 0x90, 0x80, 0x20, \
-                                   0x00, 0x02, 0xFE, 0x10, \
-                                   0x09, 0x00, 0x59, 0x11  }
-
 #define RFM_CONFIG_NODEADDRESS 0x02
 
 #define RFM_CONFIG_PINRESET 9

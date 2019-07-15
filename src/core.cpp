@@ -13,8 +13,8 @@ namespace timer = mardev::msp430::timer;
 
 namespace mardev::rfm69
 {
-    const uint8_t AESKey[] = RFM_CONFIG_ENCRYPTIONKEY;
-    const uint8_t SyncWord[] = RFM_CONFIG_SYNCWORD;
+    const uint8_t AESKey[] = RFM_ENCRYPTIONKEY;
+    const uint8_t SyncWord[] = RFM_SYNCWORD;
 
     void initialize()
     {
