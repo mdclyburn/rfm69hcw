@@ -19,7 +19,7 @@ namespace mardev::rfm69
     void initialize()
     {
         spi::initialize(
-            RFM_CONFIG_UCMODULE,
+            RFM_UCMODULE,
             usci::UCMODE::SPI3,
             spi::UCSSELx::SMCLK,
             spi::UCCKPH::P0,
@@ -27,11 +27,11 @@ namespace mardev::rfm69
             spi::UCMSB::MSBFirst);
 
         // Set up digital pins.
-        dio::set_pin_mode(RFM_CONFIG_PINSS, dio::IO::Output);
-        dio::write(RFM_CONFIG_PINSS, dio::Logic::High);
+        dio::set_pin_mode(RFM_PINSS, dio::IO::Output);
+        dio::write(RFM_PINSS, dio::Logic::High);
 
         // Set up reset.
-        dio::set_pin_mode(RFM_CONFIG_PINRESET, dio::IO::Output);
+        dio::set_pin_mode(RFM_PINRESET, dio::IO::Output);
         reset();
         timer::delay(250);
 
@@ -44,7 +44,7 @@ namespace mardev::rfm69
 
         // Node addressing.
         // Listen for both unique and broadcast addresses.
-        write(registers::NodeAdrs, RFM_CONFIG_NODEADDRESS);
+        write(registers::NodeAdrs, RFM_NODEADDRESS);
         modify(registers::PacketConfig1, registers::mask::AddressFiltering, 2);
 
         // CRC
@@ -60,19 +60,19 @@ namespace mardev::rfm69
         write(registers::PayloadLength, 255);
 
         // Set data rate.
-        write(registers::BitRateMSB, RFM_CONFIG_BITRATE >> 8);
-        write(registers::BitRateLSB, RFM_CONFIG_BITRATE & 0x00FF);
+        write(registers::BitRateMSB, RFM_BITRATE >> 8);
+        write(registers::BitRateLSB, RFM_BITRATE & 0x00FF);
 
         // Sync word
         // TODO: extract the sync word back out into a configuration.
-        // const uint8_t sync_word[] = RFM_CONFIG_SYNCWORD;
+        // const uint8_t sync_word[] = RFM_SYNCWORD;
 
         // Enable use of the sync word.
         // Size of the sync word is taken to be 7 = 6 + 1.
         // Write the 56-bit sync word.
         modify(registers::SyncConfig, registers::mask::SyncOn, 1);
-        modify(registers::SyncConfig, registers::mask::SyncSize, RFM_CONFIG_SYNCWORDLENGTH);
-        write(registers::SyncValue1, SyncWord, RFM_CONFIG_SYNCWORDLENGTH+1);
+        modify(registers::SyncConfig, registers::mask::SyncSize, RFM_SYNCWORDLENGTH);
+        write(registers::SyncValue1, SyncWord, RFM_SYNCWORDLENGTH+1);
 
         // AES encryption
         write(registers::AESKey01, AESKey, 16);
@@ -93,9 +93,9 @@ namespace mardev::rfm69
 
     void reset()
     {
-        dio::write(RFM_CONFIG_PINRESET, dio::Logic::High);
+        dio::write(RFM_PINRESET, dio::Logic::High);
         timer::delay(1000);
-        dio::write(RFM_CONFIG_PINRESET, dio::Logic::Low);
+        dio::write(RFM_PINRESET, dio::Logic::Low);
         timer::delay(500);
 
         return;
@@ -103,13 +103,13 @@ namespace mardev::rfm69
 
     void select()
     {
-        dio::write(RFM_CONFIG_PINSS, dio::Logic::Low);
+        dio::write(RFM_PINSS, dio::Logic::Low);
         return;
     }
 
     void deselect()
     {
-        dio::write(RFM_CONFIG_PINSS, dio::Logic::High);
+        dio::write(RFM_PINSS, dio::Logic::High);
         return;
     }
 
