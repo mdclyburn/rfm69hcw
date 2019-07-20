@@ -20,7 +20,7 @@ namespace mardev::rfm69
     {
         spi::initialize(
             RFM_UCMODULE,
-            usci::UCMODE::SPI3,
+            spi::UCMODE::SPI3,
             spi::UCSSELx::SMCLK,
             spi::UCCKPH::P0,
             spi::UCCKPL::P0,
