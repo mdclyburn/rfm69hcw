@@ -125,6 +125,19 @@ namespace mardev::rfm69
         return value;
     }
 
+    void read(const uint8_t begin_address,
+              uint8_t* const out,
+              const uint8_t length)
+    {
+        select();
+        spi::write(RFM_UCMODULE, begin_address & 127);
+        for(uint8_t i = 0; i < length; i++)
+            out[i] = spi::write(RFM_UCMODULE, 0);
+        deselect();
+
+        return;
+    }
+
     uint8_t write(const uint8_t address,
                   const uint8_t value)
     {

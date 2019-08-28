@@ -32,6 +32,18 @@ namespace mardev::rfm69
      */
     uint8_t read(const uint8_t address);
 
+    /** Read from a contiguous range of registers.
+     *
+     * Reads values of contiguous registers from the radio.
+     *
+     * \param begin_address Address of the first register to read.
+     * \param out Buffer to read values to.
+     * \param length Number of registers to read.
+     */
+    void read(const uint8_t begin_address,
+              uint8_t* const out,
+              const uint8_t length);
+
     /** Write to a register.
      *
      * Writes the specified value to the specified register.
