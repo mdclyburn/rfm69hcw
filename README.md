@@ -4,10 +4,10 @@ A driver for the RFM69HCW wireless transceiver that aims to be both space-effici
 
 How to Use
 ----------
-Create or copy the `rfm_configuration.h` file to your project.
-Various features can be enabled or disabled with `#define`s.
-This allows you to choose only the bits of code you need.
-Parameters will need to be tweaked to your specific use case with `#define`s as well.
+Configuration is located in the project Makefile in the `src` directory.
 
-For example, placing `#define RFM_FEATURE_TEMPERATURE` in the `rfm_configuration.h` file includes code to work with the temperature sensor.
-See the `rfm_configuration.h` file for a full listing of features.
+|Variable|Usage|
+|:------:|:----|
+|`MSP430PATH`| Path to the MSP430 toolchain (contains the `bin` and `lib` directories).|
+|`MSP430MCU`|MCU to build for. Acceptable values are those accepted by GCC's `--mcu=` option.|
+|`MDLPATH`|Path to the MDL wrapper library source.|
