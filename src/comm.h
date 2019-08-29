@@ -6,6 +6,15 @@
 
 namespace mardev::rfm69
 {
+    enum class Mode : uint8_t
+    {
+        Sleep = 1,
+        Standby = 2,
+        FrequencySynthesizer = 3,
+        Transmit = 4,
+        Receive = 5
+    };
+
     /** Returns the radio's current operating mode.
      */
     uint8_t mode();
@@ -17,7 +26,7 @@ namespace mardev::rfm69
      *
      * \param mode Operating mode to switch to.
      */
-    void mode(const uint8_t mode);
+    void mode(const Mode mode);
 
     /** Returns true when the complete packet has been sent.
      */

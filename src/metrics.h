@@ -1,7 +1,6 @@
 #ifndef RFM69_METRICS_H
 #define RFM69_METRICS_H
 
-#include "control.h"
 #include "core.h"
 #include "registers.h"
 

@@ -7,12 +7,12 @@ namespace mardev::rfm69
         return (read(registers::OpMode) & registers::mask::Mode) >> 2;
     }
 
-    void mode(const uint8_t mode)
+    void mode(const Mode mode)
     {
         modify(
             registers::OpMode,
             registers::mask::Mode,
-            mode);
+            (uint8_t) mode);
 
         while(!(read(registers::IRQFlags1) & registers::mask::ModeReady));
 

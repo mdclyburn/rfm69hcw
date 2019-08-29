@@ -17,7 +17,7 @@ namespace mardev::rfm69
         // The temperature sensor can only be used in standby or frequency
         // synthesizer modes but not in receive mode.
         const uint8_t current_mode = mode();
-        if(current_mode == RFM_OPMODE_SLEEP || current_mode == RFM_OPMODE_RECEIVE)
+        if(current_mode == (uint8_t) Mode::Sleep || current_mode == (uint8_t) Mode::FrequencySynthesizer)
             return 0;
 
         // According to the datasheet, reading the temperature takes < 100us.
