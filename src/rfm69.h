@@ -5,6 +5,5 @@
 #include "comm.h"
 #include "fifo.h"
 #include "metrics.h"
-#include "control.h"
 
 #endif
