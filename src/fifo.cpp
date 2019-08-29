@@ -1,37 +1,34 @@
 #include "fifo.h"
 
-namespace mardev
+namespace mardev::rfm69
 {
-    namespace rfm69
+    void read_fifo(uint8_t* const buffer)
     {
-        void read_fifo(uint8_t* const buffer)
+        uint8_t i = 0;
+        while(!fifo_is_empty())
         {
-            uint8_t i = 0;
-            while(!fifo_is_empty())
-            {
-                buffer[i++] = read(registers::FIFO);
-            }
-
-            return;
+            buffer[i++] = read(registers::FIFO);
         }
 
-        uint8_t write_fifo(const uint8_t* const buffer,
-                           const uint8_t size)
-        {
-            // Limit for the library is at 66 bytes (at least for now).
-            if (size > 66)
-                return 1;
+        return;
+    }
 
-            // FIFO full
-            if (read(registers::IRQFlags2) & 128)
-                return 2;
+    uint8_t write_fifo(const uint8_t* const buffer,
+                       const uint8_t size)
+    {
+        // Limit for the library is at 66 bytes (at least for now).
+        if (size > 66)
+            return 1;
 
-            // TODO: turn this into a single burst-write.
-            uint8_t i = 0;
-            while(i < size && !(read(registers::IRQFlags2) & 128))
-                write(registers::FIFO, buffer[i++]);
+        // FIFO full
+        if (read(registers::IRQFlags2) & 128)
+            return 2;
 
-            return 0;
-        }
+        // TODO: turn this into a single burst-write.
+        uint8_t i = 0;
+        while(i < size && !(read(registers::IRQFlags2) & 128))
+            write(registers::FIFO, buffer[i++]);
+
+        return 0;
     }
 }
