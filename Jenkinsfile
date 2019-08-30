@@ -7,6 +7,7 @@ pipeline {
 
       steps {
         dir ('src') {
+          sh 'git submodule init && git submodule update'
           sh 'make MSP430PATH=/usr/local/msp430 MSP430MCU=msp430g2553'
         }
       }
