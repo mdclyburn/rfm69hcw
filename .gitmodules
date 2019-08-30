@@ -1,0 +1,3 @@
+[submodule "src/msp430"]
+	path = src/msp430
+	url = https://git.mardevlabs.org/marshall/msp430.git

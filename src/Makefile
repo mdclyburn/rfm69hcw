@@ -1,7 +1,7 @@
 MSP430PATH = /usr/local/msp430
 MSP430MCU = msp430g2553
 
-MDLPATH = ../../msp430/src
+MDLMSP430PATH = ./msp430
 
 # RFM69 Configuration #########
 RFM_BITRATE = 0x1A0B
@@ -25,7 +25,7 @@ RFM_CONFIG = \
 
 GCCVERSION = $(shell ls $(MSP430PATH)/lib/gcc/msp430-elf | head -n1)
 CC = $(MSP430PATH)/bin/msp430-elf-gcc
-CFLAGS = -I $(MDLPATH) -Os -std=c++17 -nostdlib -ffreestanding -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -fno-unwind-tables -fomit-frame-pointer -fno-exceptions -mmcu=$(MSP430MCU) $(RFM_CONFIG)
+CFLAGS = -I $(MDLMSP430PATH) -Os -std=c++17 -nostdlib -ffreestanding -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -fno-unwind-tables -fomit-frame-pointer -fno-exceptions -mmcu=$(MSP430MCU) $(RFM_CONFIG)
 
 CXX = $(MSP430PATH)/bin/msp430-elf-g++
 CXXFLAGS = $(CFLAGS)
