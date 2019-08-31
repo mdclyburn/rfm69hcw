@@ -9,7 +9,7 @@ pipeline {
         sh 'doxygen >/dev/null'
         dir ('doc') {
           dir ('latex') {
-            sh  'latexmk -pdf -dvi- pquiet refman.tex'
+            sh  'latexmk -pdf -dvi- -quiet refman.tex'
             stash(name: 'docs-pdf', includes: 'refman.pdf')
           }
 
