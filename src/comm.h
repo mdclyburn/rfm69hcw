@@ -1,3 +1,8 @@
+/** @file
+ *
+ * Radio communications
+ */
+
 #ifndef RFM69_COMM_H
 #define RFM69_COMM_H
 

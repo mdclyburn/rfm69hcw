@@ -1,3 +1,8 @@
+/** @file
+ *
+ * Common, low-level functionality
+ */
+
 #ifndef RFM69_CORE_H
 #define RFM69_CORE_H
 

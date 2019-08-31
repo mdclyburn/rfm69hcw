@@ -1,3 +1,8 @@
+/** @file
+ *
+ * Manipulate the FIFO
+ */
+
 #ifndef RFM69_FIFO_H
 #define RFM69_FIFO_H
 

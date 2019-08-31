@@ -1,3 +1,8 @@
+/** @file
+ *
+ * Reading statistics
+ */
+
 #ifndef RFM69_METRICS_H
 #define RFM69_METRICS_H
 
