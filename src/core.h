@@ -78,7 +78,7 @@ namespace mardev::rfm69
      *
      * Inserts value into rfm_register without losing the state of the unmasked bits.
      *
-     * \param rfm_register Address of the register to modify.
+     * \param address Address of the register to modify.
      * \param mask Bit mask of the bits to be set.
      * \param value Value to set in the mask.
      */

@@ -13,7 +13,21 @@ namespace timer = mardev::msp430::timer;
 
 namespace mardev::rfm69
 {
+    /** 128-bit AES encryption key.
+     *
+     * The 128-bit (16 bytes) key used to encrypt each packet being sent.
+     * This value must be the same for each radio expected to communicate.
+     * Configure this value with the RFM_ENCRYPTIONKEY variable in the rfm-config.mk file.
+     */
     const uint8_t AESKey[] = RFM_ENCRYPTIONKEY;
+
+    /** Synchronization sequence value.
+     *
+     * Sequence of one to eight bytes used to synchronize messages.
+     * Configure this value with the RFM_SYNCWORD variable in the rfm-config.mk file.
+     * Update the RFM_SYNCWORDLENGTH value accordingly as well.
+     * RFM_SYNCWORDLENGTH should be set to the number of byes provided for RFM_SYNCWORD minus 1.
+     */
     const uint8_t SyncWord[] = RFM_SYNCWORD;
 
     void initialize()
@@ -101,12 +115,16 @@ namespace mardev::rfm69
         return;
     }
 
+    /** Begin an SPI transaction with the radio.
+     */
     void select()
     {
         dio::write(RFM_PINSS, dio::Logic::Low);
         return;
     }
 
+    /** End and SPI transaction with the radio.
+     */
     void deselect()
     {
         dio::write(RFM_PINSS, dio::Logic::High);
