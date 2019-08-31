@@ -12,6 +12,8 @@
 namespace mardev::rfm69
 {
     /** Returns the RSSI value.
+     *
+     * \returns RSSI value.
      */
     inline int16_t rssi()
     {
@@ -26,6 +28,8 @@ namespace mardev::rfm69
      * This function requires RFM_FEATURE_TEMPERATURE.
      *
      * \param offset adjustment value to add to the returned value
+     *
+     * \returns Temperature value.
      */
     uint8_t temperature(const int8_t offset = 0);
 }

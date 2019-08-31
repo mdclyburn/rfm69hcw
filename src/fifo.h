@@ -32,6 +32,8 @@ namespace mardev::rfm69
      *
      * \param buffer Buffer to write to the FIFO.
      * \param size Length of the buffer.
+     *
+     * \returns Result of the write operation.
      */
     uint8_t write_fifo(const uint8_t* const buffer,
                        const uint8_t size);

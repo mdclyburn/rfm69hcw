@@ -11,6 +11,8 @@
 
 namespace mardev::rfm69
 {
+    /** Radio operating modes
+     */
     enum class Mode : uint8_t
     {
         Sleep = 0,
