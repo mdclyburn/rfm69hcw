@@ -32,13 +32,14 @@ namespace mardev::rfm69
 
     void initialize()
     {
-        spi::initialize(
-            RFM_UCMODULE,
-            spi::UCMODE::SPI3,
-            spi::UCSSELx::SMCLK,
-            spi::UCCKPH::P0,
-            spi::UCCKPL::P0,
-            spi::UCMSB::MSBFirst);
+        const spi::Module module = RFM_UCMODULE;
+        spi::reset(module);
+        spi::set_mode(module, spi::UCMODE::SPI3);
+        spi::set_clock_source(module, spi::UCSSEL::SMCLK);
+        spi::set_clock_phase(module, spi::UCCKPH::P0);
+        spi::set_clock_polarity(module, spi::UCCKPL::P0);
+        spi::set_bit_endianness(module, spi::UCMSB::MSBFirst);
+        spi::enable(module);
 
         // Set up digital pins.
         dio::set_pin_mode(RFM_PINSS, dio::IO::Output);
