@@ -1,7 +1,7 @@
 MSP430PATH = /usr/local/msp430
 MSP430MCU = msp430g2553
 
-MDLMSP430PATH = ./msp430/src
+MDLMSP430PATH = ../../msp430/src
 
 include rfm-config.mk
 
