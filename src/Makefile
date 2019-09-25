@@ -16,7 +16,7 @@ AR = $(MSP430PATH)/bin/msp430-elf-ar
 
 objects = $(addsuffix .o, $(basename $(shell ls *.cpp)))
 
-libmdlrfm69hcw.a: $(objects)
+libmdlrfm69hcw.a: $(objects) rfm-config.mk
 	$(AR) rvs $@ $^
 
 $(objects):
