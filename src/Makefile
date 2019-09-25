@@ -24,4 +24,4 @@ $(objects):
 .PHONY: clean
 
 clean:
-	$(RM) *.o libmdlmsp430.a
+	$(RM) *.o libmdlrfm69hcw.a
