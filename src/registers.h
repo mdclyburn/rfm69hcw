@@ -101,21 +101,21 @@ namespace mardev::rfm69
         namespace mask
         {
             // OpMode
-            const uint8_t Mode       = 28; // 00011100
-            const uint8_t ListenAbrt = 32;
-            const uint8_t Listen     = 64;
-            const uint8_t SeqOff     = 128;
-            const uint8_t OpMode_Sleep                = 0;
-            const uint8_t OpMode_Standby              = 1 << 2;
-            const uint8_t OpMode_FrequencySynthesizer = 2 << 2;
-            const uint8_t OpMode_Transmitter          = 3 << 2;
-            const uint8_t OpMode_Receiver             = 4 << 2;
+            const uint8_t Mode                        = 0b00011100;
+            const uint8_t ListenAbrt                  = 0b00100000;
+            const uint8_t Listen                      = 0b01000000;
+            const uint8_t SeqOff                      = 0b10000000;
+            const uint8_t OpMode_Sleep                = 0b00000000;
+            const uint8_t OpMode_Standby              = 0b00000100;
+            const uint8_t OpMode_FrequencySynthesizer = 0b00001000;
+            const uint8_t OpMode_Transmitter          = 0b00001100;
+            const uint8_t OpMode_Receiver             = 0b00001000;
 
             // Listen1
-            const uint8_t ListenEnd       = 6;        // 00000110
-            const uint8_t ListenCriteria  = 8;
-            const uint8_t ListenResolRx   = 32 + 16;  // 00110000
-            const uint8_t ListenResolIdle = 128 + 64;
+            const uint8_t ListenEnd       = 0b00000110;
+            const uint8_t ListenCriteria  = 0b00001000;
+            const uint8_t ListenResolRx   = 0b00110000;
+            const uint8_t ListenResolIdle = 0b11000000;
 
             // RegDioMapping1
             const uint8_t Dio0Mapping = 0b11000000;
@@ -128,49 +128,49 @@ namespace mardev::rfm69
             const uint8_t Dio5Mapping = 0b00110000;
 
             // IRQFlags1
-            const uint8_t SyncAddressMatch = 1;
-            const uint8_t AutoMode         = 2;
-            const uint8_t Timeout          = 4;
-            const uint8_t RSSI             = 8;
-            const uint8_t PLLLock          = 16;
-            const uint8_t TxReady          = 32;
-            const uint8_t RxReady          = 64;
-            const uint8_t ModeReady        = 128;
+            const uint8_t SyncAddressMatch = 0b00000001;
+            const uint8_t AutoMode         = 0b00000010;
+            const uint8_t Timeout          = 0b00000100;
+            const uint8_t RSSI             = 0b00001000;
+            const uint8_t PLLLock          = 0b00010000;
+            const uint8_t TxReady          = 0b00100000;
+            const uint8_t RxReady          = 0b01000000;
+            const uint8_t ModeReady        = 0b10000000;
 
             // IRQFlags2
-            const uint8_t CRCOK            = 2;
-            const uint8_t PayloadReady     = 4;
-            const uint8_t PacketSent       = 8;
-            const uint8_t FIFOOverrun      = 16;
-            const uint8_t FIFOLevel        = 32;
-            const uint8_t FIFONotEmpty     = 64;
-            const uint8_t FIFOFull         = 128;
+            const uint8_t CRCOK            = 0b00000010;
+            const uint8_t PayloadReady     = 0b00000100;
+            const uint8_t PacketSent       = 0b00001000;
+            const uint8_t FIFOOverrun      = 0b00010000;
+            const uint8_t FIFOLevel        = 0b00100000;
+            const uint8_t FIFONotEmpty     = 0b01000000;
+            const uint8_t FIFOFull         = 0b10000000;
 
             // SyncConfig
-            const uint8_t SyncTol           = 7;  // 00000111
-            const uint8_t SyncSize          = 56; // 00111000
-            const uint8_t FIFOFillCondition = 64;
-            const uint8_t SyncOn            = 128;
+            const uint8_t SyncTol           = 0b00000111;
+            const uint8_t SyncSize          = 0b00111000;
+            const uint8_t FIFOFillCondition = 0b01000000;
+            const uint8_t SyncOn            = 0b10000000;
 
             // PacketConfig1
-            const uint8_t AddressFiltering = 6;  // 00000110
-            const uint8_t CRCAutoClearOff  = 8;
-            const uint8_t CRCOn            = 16;
-            const uint8_t DCFree           = 96; // 01100000
-            const uint8_t PacketFormat     = 128;
+            const uint8_t AddressFiltering = 0b00000110;  // 00000110
+            const uint8_t CRCAutoClearOff  = 0b00001000;
+            const uint8_t CRCOn            = 0b00010000;
+            const uint8_t DCFree           = 0b01100000;
+            const uint8_t PacketFormat     = 0b10000000;
 
             // FIFOThresh
-            const uint8_t FIFOThreshold    = 127; // 01111111
-            const uint8_t TxStartCondition = 128;
+            const uint8_t FIFOThreshold    = 0b01111111;
+            const uint8_t TxStartCondition = 0b10000000;
 
             // PacketConfig2
-            const uint8_t AESOn              = 1;
-            const uint8_t AutoRxRestartOn    = 2;
-            const uint8_t InterPacketRxDelay = 240; // 11110000
+            const uint8_t AESOn              = 0b00000001;
+            const uint8_t AutoRxRestartOn    = 0b00000010;
+            const uint8_t InterPacketRxDelay = 0b11110000;
 
             // Temp1
-            const uint8_t TempMeasRunning = 4;
-            const uint8_t TempMeasStart   = 8;
+            const uint8_t TempMeasRunning = 0b00000100;
+            const uint8_t TempMeasStart   = 0b00001000;
         }
     }
 }
