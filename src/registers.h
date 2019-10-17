@@ -117,6 +117,16 @@ namespace mardev::rfm69
             const uint8_t ListenResolRx   = 32 + 16;  // 00110000
             const uint8_t ListenResolIdle = 128 + 64;
 
+            // RegDioMapping1
+            const uint8_t Dio0Mapping = 0b11000000;
+            const uint8_t Dio1Mapping = 0b00110000;
+            const uint8_t Dio2Mapping = 0b00001100;
+            const uint8_t Dio3Mapping = 0b00000011;
+
+            // RegDioMapping2
+            const uint8_t Dio4Mapping = 0b11000000;
+            const uint8_t Dio5Mapping = 0b00110000;
+
             // IRQFlags1
             const uint8_t SyncAddressMatch = 1;
             const uint8_t AutoMode         = 2;

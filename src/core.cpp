@@ -103,6 +103,9 @@ namespace mardev::rfm69
         write(registers::PreambleMSB, 0x00);
         write(registers::PreambleLSB, 0x40);
 
+        // Enable PayloadReady signal on DIO0 in Rx mode.
+        modify(registers::DIOMapping1, registers::mask::Dio0Mapping, 0b01000000);
+
         return;
     }
 
