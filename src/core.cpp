@@ -78,10 +78,6 @@ namespace mardev::rfm69
         write(registers::BitRateMSB, RFM_BITRATE >> 8);
         write(registers::BitRateLSB, RFM_BITRATE & 0x00FF);
 
-        // Sync word
-        // TODO: extract the sync word back out into a configuration.
-        // const uint8_t sync_word[] = RFM_SYNCWORD;
-
         // Enable use of the sync word.
         // Size of the sync word is taken to be 7 = 6 + 1.
         // Write the 56-bit sync word.
