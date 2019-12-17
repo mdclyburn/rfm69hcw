@@ -13,6 +13,18 @@ namespace mardev::rfm69
         return;
     }
 
+    uint8_t read_fifo(uint8_t* const buffer,
+                      const uint8_t max_bytes)
+    {
+        uint8_t i = 0;
+        while(!fifo_is_empty() && i < max_bytes)
+        {
+            buffer[i++] = read(registers::FIFO);
+        }
+
+        return i;
+    }
+
     uint8_t write_fifo(const uint8_t* const buffer,
                        const uint8_t size)
     {

@@ -22,6 +22,17 @@ namespace mardev::rfm69
      */
     void read_fifo(uint8_t* const buffer);
 
+    /** Write data from the FIFO to a buffer.
+     *
+     * Copies the specified amount of data from the RFM FIFO to the given buffer.
+     * Returns the number of bytes read.
+     *
+     * \param buffer Buffer to write data from the FIFO to.
+     * \param max_bytes Maximum number of bytes to read from the FIFO.
+     */
+    uint8_t read_fifo(uint8_t* const buffer,
+                      const uint8_t max_bytes);
+
     /** Write the contents of a buffer to the FIFO.
      *
      * Copies the data from the buffer to the FIFO.
